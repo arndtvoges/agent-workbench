@@ -1,0 +1,22 @@
+{
+  "name": "agent-workbench",
+  "version": "1.0.0",
+  "description": "Claude Code agent and command configuration installer",
+  "main": "install.js",
+  "bin": {
+    "agent-workbench": "./install.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/agent-workbench.git"
+  },
+  "keywords": [
+    "claude",
+    "ai",
+    "agents",
+    "configuration",
+    "installer"
+  ],
+  "author": "",
+  "license": "MIT"
+}
