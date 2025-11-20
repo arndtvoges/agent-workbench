@@ -25,10 +25,8 @@ A powerful collection of Claude Code agents and commands for streamlined softwar
 ### One-Line Install
 
 ```bash
-npx github:yourusername/agent-workbench
+npx github:arndtvoges/agent-workbench
 ```
-
-Replace `yourusername` with your GitHub username.
 
 The installer will:
 1. ✓ Check your Claude CLI version
@@ -61,7 +59,7 @@ The installer copies the following to `./.claude/` in your current directory:
 First, establish your project's engineering standards:
 
 ```bash
-claude
+claude --dangerously-skip-permissions
 /create-standards
 ```
 
@@ -72,7 +70,7 @@ This creates a `./standards/` directory with guidelines for your AI agents.
 Use the import-spec command to transform a product idea into working code:
 
 ```bash
-claude
+claude --dangerously-skip-permissions
 /import-spec path/to/your/feature-idea.md
 ```
 
@@ -86,7 +84,7 @@ This workflow:
 When bugs arise, use the fix-bug command:
 
 ```bash
-claude
+claude --dangerously-skip-permissions
 /fix-bug "describe the bug"
 ```
 
@@ -155,15 +153,6 @@ your-project/
 
 ## How It Works
 
-### The npx Trick
-
-This installer uses `npx github:username/repo` to run directly from GitHub without publishing to npm:
-
-1. npx downloads the repo
-2. Runs the `install.js` script
-3. Copies configuration to your project
-4. Cleans up
-
 ### Backup Strategy
 
 Before overwriting any existing configuration, the installer creates a timestamped backup:
@@ -194,15 +183,5 @@ claude --version
 
 ### "/create-standards command not found"
 
-Make sure you're running `claude` from a directory that contains the `.claude/` folder created by this installer.
-
-## Contributing
-
-Contributions welcome! Please ensure:
-- Agent files follow the established YAML frontmatter format
-- Commands include clear descriptions and argument hints
-- All changes are tested with Claude CLI
-
-## License
-
-MIT
+- Make sure you're running `claude` from a directory that contains the `.claude/` folder created by this installer. You may have accidentally ran this command in another project.
+- Then make sure to restart your Claude code instance in the terminal to reload the newly installed files

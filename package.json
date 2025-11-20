@@ -10,13 +10,5 @@
     "type": "git",
     "url": "git+https://github.com/yourusername/agent-workbench.git"
   },
-  "keywords": [
-    "claude",
-    "ai",
-    "agents",
-    "configuration",
-    "installer"
-  ],
-  "author": "",
-  "license": "MIT"
+  "author": "Arndt Voges"
 }
