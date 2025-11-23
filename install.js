@@ -88,7 +88,8 @@ function backupExistingConfig(targetDir) {
 
   // Create backup with timestamp
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-  const backupDir = path.join(targetDir, `.claude.backup.${timestamp}`);
+  const backupBaseDir = path.join(targetDir, 'claude-backup-workbench');
+  const backupDir = path.join(backupBaseDir, timestamp);
 
   fs.mkdirSync(backupDir, { recursive: true });
 
@@ -209,7 +210,8 @@ function main() {
   log(`  • Files installed: ${result.totalFiles} (${result.agentFiles} agents + ${result.commandFiles} commands + ${result.skillFiles} skills)`, 'cyan');
 
   if (result.backupPath) {
-    log(`  • Backup created: ${path.basename(result.backupPath)}/`, 'yellow');
+    const relativePath = path.relative(result.targetDir, result.backupPath);
+    log(`  • Backup created: ${relativePath}/`, 'yellow');
   }
 
   log(`\n${colors.bold}Next Steps:${colors.reset}`);
