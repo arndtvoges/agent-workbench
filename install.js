@@ -75,12 +75,14 @@ function isVersionValid(current, minimum) {
 function backupExistingConfig(targetDir) {
   const agentsDir = path.join(targetDir, '.claude', 'agents');
   const commandsDir = path.join(targetDir, '.claude', 'commands');
+  const skillsDir = path.join(targetDir, '.claude', 'skills');
 
-  // Check if either directory exists
+  // Check if any directory exists
   const hasAgents = fs.existsSync(agentsDir);
   const hasCommands = fs.existsSync(commandsDir);
+  const hasSkills = fs.existsSync(skillsDir);
 
-  if (!hasAgents && !hasCommands) {
+  if (!hasAgents && !hasCommands && !hasSkills) {
     return null; // No backup needed
   }
 
@@ -98,6 +100,11 @@ function backupExistingConfig(targetDir) {
   if (hasCommands) {
     const backupCommandsDir = path.join(backupDir, 'commands');
     copyDirectory(commandsDir, backupCommandsDir);
+  }
+
+  if (hasSkills) {
+    const backupSkillsDir = path.join(backupDir, 'skills');
+    copyDirectory(skillsDir, backupSkillsDir);
   }
 
   return backupDir;
@@ -120,6 +127,21 @@ function copyDirectory(src, dest) {
   }
 }
 
+function countFilesRecursively(dir) {
+  let count = 0;
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    if (entry.isDirectory()) {
+      count += countFilesRecursively(path.join(dir, entry.name));
+    } else {
+      count++;
+    }
+  }
+
+  return count;
+}
+
 function installConfig() {
   const targetDir = process.cwd();
   const sourceDir = path.join(__dirname, '.claude');
@@ -131,25 +153,35 @@ function installConfig() {
   // Backup existing config if present
   const backupPath = backupExistingConfig(targetDir);
 
-  // Copy agents and commands
+  // Copy agents, commands, and skills
   const sourceAgents = path.join(sourceDir, 'agents');
   const sourceCommands = path.join(sourceDir, 'commands');
+  const sourceSkills = path.join(sourceDir, 'skills');
   const targetAgents = path.join(targetClaudeDir, 'agents');
   const targetCommands = path.join(targetClaudeDir, 'commands');
+  const targetSkills = path.join(targetClaudeDir, 'skills');
 
   copyDirectory(sourceAgents, targetAgents);
   copyDirectory(sourceCommands, targetCommands);
 
+  // Copy skills directory if it exists in source
+  let skillFiles = 0;
+  if (fs.existsSync(sourceSkills)) {
+    copyDirectory(sourceSkills, targetSkills);
+    skillFiles = countFilesRecursively(targetSkills);
+  }
+
   // Count files
   const agentFiles = fs.readdirSync(targetAgents).length;
   const commandFiles = fs.readdirSync(targetCommands).length;
-  const totalFiles = agentFiles + commandFiles;
+  const totalFiles = agentFiles + commandFiles + skillFiles;
 
   return {
     targetDir,
     backupPath,
     agentFiles,
     commandFiles,
+    skillFiles,
     totalFiles
   };
 }
@@ -174,7 +206,7 @@ function main() {
 
   log(`${colors.bold}Installation Summary:${colors.reset}`);
   log(`  • Location: ${result.targetDir}/.claude/`, 'cyan');
-  log(`  • Files installed: ${result.totalFiles} (${result.agentFiles} agents + ${result.commandFiles} commands)`, 'cyan');
+  log(`  • Files installed: ${result.totalFiles} (${result.agentFiles} agents + ${result.commandFiles} commands + ${result.skillFiles} skills)`, 'cyan');
 
   if (result.backupPath) {
     log(`  • Backup created: ${path.basename(result.backupPath)}/`, 'yellow');
