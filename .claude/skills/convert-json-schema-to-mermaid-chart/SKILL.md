@@ -12,9 +12,10 @@ A user, agent, or command may provide a data model as JSON schema and ask you to
 - "The following file will contain JSON schema code that I want you to convert to a Mermaid chart"
 
 ## Guidelines
+- This skill is specific to data models and you should use the appropriate diagram types
 - Only output Mermaid code
-- Do NOT generate charts (PDF, images, etc.) but test your output against the generator to capture errors
-- This skill is specific to data models
+- Attempt to optimize the graph for vertical scrolling
+- Test your code by generating an SVG file from the model
 
 ## How to test your Mermaid code
 1) Install the Mermaid CLI globally: `npm install -g @mermaid-js/mermaid-cli`
