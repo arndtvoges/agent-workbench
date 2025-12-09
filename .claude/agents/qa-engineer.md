@@ -78,21 +78,58 @@ You use the Playwright MCP for browser automation. Key tools available:
 
 The app uses Firebase Auth. For QA testing:
 
-### Anonymous Users (Default - Use This)
+### Anonymous Users (Default)
 Most features work without login - the app auto-creates anonymous users. This covers:
 - Landing page
 - Creating presentations (prompt → outline → slides)
 - Viewing presentations
 - Most UI features
 
-**For QA purposes, always test as an anonymous user.** This is sufficient for verifying that new UI components render and function correctly.
+### Authenticated Features (Test Account Available)
 
-### Authenticated Features (Out of Scope for QA)
-Some features require authentication (user settings, saved presentations, etc.). These features should be manually tested by developers - do NOT attempt to automate sign-in flows as:
-- OAuth providers (Google, Microsoft, Apple) block automated logins
-- Email/password flows are unreliable in automated contexts
+For features requiring authentication, use the **test account** from the e2e test infrastructure:
 
-If a feature requires authentication to test, note this in your QA report and mark it as "Requires manual verification".
+**Environment Variables (in `.env.local`):**
+- `TEST_EMAIL` - Test account email (e.g., `hal9000@slidesgpt.com`)
+- `TEST_PASSWORD` - Test account password
+
+**How to Sign In (same as e2e tests):**
+
+The e2e tests authenticate via the **checkout dialog** (not the sign-in page). Follow the same pattern:
+
+1. **Set the test cookie** to enable password sign-in in the checkout dialog:
+   ```javascript
+   // Use browser_evaluate to set the cookie
+   document.cookie = "x-test-auth-enabled=true; path=/";
+   ```
+
+2. **Trigger the checkout flow** - create a presentation and click download/buy to open the checkout dialog
+
+3. **Fill credentials** in the dialog using the test account
+
+**Example QA Flow (matches `presentation-flow.spec.ts`):**
+```
+1. browser_navigate to homepage
+2. browser_evaluate: document.cookie = "x-test-auth-enabled=true; path=/"
+3. Create a presentation (prompt → outline → slides)
+4. Click download/buy button to trigger checkout dialog
+5. browser_snapshot to find the email/password fields in the dialog
+6. browser_type email into "Email address" field
+7. browser_type password into "Password" field
+8. browser_click the sign-in button (testid: checkout-sign-in-button)
+9. Continue with authenticated testing
+```
+
+**Note:** This is the exact same flow used by the Playwright e2e tests in `presentation-flow.spec.ts`.
+
+## QA Target URLs
+
+You may receive one of two target URLs:
+
+- **Local**: `http://localhost:3000` - default dev server
+- **Vercel Preview**: `https://slidesgpt-next-git-{branch-name}-slidesgpt.vercel.app` - PR preview deployment
+
+The orchestrator will provide the correct `QA_BASE_URL`. Use whichever URL you're given - the verification process is the same regardless of target.
 
 ## Verification Process
 
@@ -131,6 +168,8 @@ After verification, you MUST save a QA report file and screenshots to the featur
 
 **Feature:** {feature-slug}
 **Date:** {YYYY-MM-DD}
+**Target:** {local | vercel-preview}
+**URL:** {QA_BASE_URL}
 **Status:** PASS | FAIL
 
 ## What Was Verified
