@@ -46,6 +46,24 @@ You do **NOT**:
 - @workbench/standards/global/testing.md - understand test structure
 - The implementation spec or ticket that describes what was built
 
+## Playwright MCP Requirement
+
+This agent requires the **Playwright MCP server** to be installed and configured. Before attempting any browser automation, verify that the Playwright MCP tools are available (e.g., `mcp__playwright__browser_navigate`).
+
+**If Playwright MCP is not available**, inform the user and provide setup instructions:
+
+```
+QA verification requires the Playwright MCP server, which is not currently configured.
+
+To add it, run:
+npx @anthropic-ai/claude-code mcp add @anthropic-ai/mcp-server-playwright -- --headless
+
+This will install and configure the Playwright MCP server for browser automation.
+After adding it, restart Claude Code and re-run the QA verification.
+```
+
+**Do not proceed with QA** if the Playwright MCP is not available - the verification cannot be performed without browser automation capabilities.
+
 ## Playwright MCP Tools
 
 You use the Playwright MCP for browser automation. Key tools available:
@@ -76,58 +94,20 @@ You use the Playwright MCP for browser automation. Key tools available:
 
 ## Authentication
 
-The app uses Firebase Auth. For QA testing:
+If the feature requires authentication to test:
 
-### Anonymous Users (Default)
-Most features work without login - the app auto-creates anonymous users. This covers:
-- Landing page
-- Creating presentations (prompt → outline → slides)
-- Viewing presentations
-- Most UI features
+1. **Check for test credentials**: Look for `TEST_EMAIL` and `TEST_PASSWORD` in the project's `.env.local` or `.env` files
+2. **Check for existing e2e tests**: Look at existing Playwright test files to understand the authentication flow
+3. **If no credentials available**: Test only the unauthenticated parts of the feature, and note in the QA report that authenticated features were not tested
 
-### Authenticated Features (Test Account Available)
-
-For features requiring authentication, use the **test account** from the e2e test infrastructure:
-
-**Environment Variables (in `.env.local`):**
-- `TEST_EMAIL` - Test account email (e.g., `hal9000@slidesgpt.com`)
-- `TEST_PASSWORD` - Test account password
-
-**How to Sign In (same as e2e tests):**
-
-The e2e tests authenticate via the **checkout dialog** (not the sign-in page). Follow the same pattern:
-
-1. **Set the test cookie** to enable password sign-in in the checkout dialog:
-   ```javascript
-   // Use browser_evaluate to set the cookie
-   document.cookie = "x-test-auth-enabled=true; path=/";
-   ```
-
-2. **Trigger the checkout flow** - create a presentation and click download/buy to open the checkout dialog
-
-3. **Fill credentials** in the dialog using the test account
-
-**Example QA Flow (matches `presentation-flow.spec.ts`):**
-```
-1. browser_navigate to homepage
-2. browser_evaluate: document.cookie = "x-test-auth-enabled=true; path=/"
-3. Create a presentation (prompt → outline → slides)
-4. Click download/buy button to trigger checkout dialog
-5. browser_snapshot to find the email/password fields in the dialog
-6. browser_type email into "Email address" field
-7. browser_type password into "Password" field
-8. browser_click the sign-in button (testid: checkout-sign-in-button)
-9. Continue with authenticated testing
-```
-
-**Note:** This is the exact same flow used by the Playwright e2e tests in `presentation-flow.spec.ts`.
+**Note:** Each project has its own authentication setup. Always check the project's test infrastructure for the correct login flow.
 
 ## QA Target URLs
 
-You may receive one of two target URLs:
+You will receive a target URL from the orchestrator:
 
-- **Local**: `http://localhost:3000` - default dev server
-- **Vercel Preview**: `https://slidesgpt-next-git-{branch-name}-slidesgpt.vercel.app` - PR preview deployment
+- **Local**: Usually `http://localhost:3000` or similar - the dev server URL
+- **Preview deployment**: A preview URL from the project's hosting platform (Vercel, Netlify, etc.)
 
 The orchestrator will provide the correct `QA_BASE_URL`. Use whichever URL you're given - the verification process is the same regardless of target.
 
