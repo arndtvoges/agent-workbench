@@ -1,0 +1,8 @@
+{
+  "name": "purple-workbench",
+  "description": "Purple team agents, commands, and skills for Claude Code",
+  "version": "1.0.0",
+  "author": {
+    "name": "Purple Team"
+  }
+}
