@@ -1,0 +1,20 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "purple-workbench",
+  "description": "Purple team agents, commands, and skills for Claude Code",
+  "owner": {
+    "name": "Purple Team"
+  },
+  "plugins": [
+    {
+      "name": "purple-workbench",
+      "description": "Purple team agents, commands, and skills for Claude Code",
+      "version": "1.0.0",
+      "author": {
+        "name": "Purple Team"
+      },
+      "source": "./plugins/purple-workbench",
+      "category": "development"
+    }
+  ]
+}
