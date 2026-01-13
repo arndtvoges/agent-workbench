@@ -1,22 +1,6 @@
 ---
 name: qa-engineer
-description: Use this agent after implementation is complete to perform basic visual and functional verification using the Playwright MCP. This agent checks that pages render correctly, there are no console errors, and new UI components actually appear on screen.
-
-Examples:
-
-<example>
-Context: A senior engineer just finished implementing a new dialog component.
-user: "The dialog feature implementation is complete. Can you verify it works correctly?"
-assistant: "I'll use the Task tool to launch the qa-engineer agent to verify the dialog renders and functions correctly."
-<commentary>The implementation is done and needs basic verification. The qa-engineer will use Playwright MCP to check the page renders without errors.</commentary>
-</example>
-
-<example>
-Context: After orchestrated implementation of a dashboard feature.
-user: "All tickets for the dashboard feature are complete."
-assistant: "Let me launch the qa-engineer agent to do a quick visual check of the new dashboard."
-<commentary>Post-implementation QA catches basic issues like missing components or console errors.</commentary>
-</example>
+description: "Use this agent after implementation is complete to perform basic visual and functional verification using the Playwright MCP. This agent checks that pages render correctly, there are no console errors, and new UI components actually appear on screen.\n\nExamples:\n\n<example>\nContext: A senior engineer just finished implementing a new dialog component.\nuser: \"The dialog feature implementation is complete. Can you verify it works correctly?\"\nassistant: \"I'll use the Task tool to launch the qa-engineer agent to verify the dialog renders and functions correctly.\"\n<commentary>The implementation is done and needs basic verification. The qa-engineer will use Playwright MCP to check the page renders without errors.</commentary>\n</example>\n\n<example>\nContext: After orchestrated implementation of a dashboard feature.\nuser: \"All tickets for the dashboard feature are complete.\"\nassistant: \"Let me launch the qa-engineer agent to do a quick visual check of the new dashboard.\"\n<commentary>Post-implementation QA catches basic issues like missing components or console errors.</commentary>\n</example>"
 model: opus
 color: green
 ---

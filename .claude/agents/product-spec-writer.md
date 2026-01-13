@@ -1,26 +1,6 @@
 ---
 name: product-spec-writer
-description: Use this agent when the user describes a new feature, product idea, or functionality they want to build. This agent should be triggered proactively whenever the user provides a feature description that needs to be fleshed out into a structured product specification before engineering work begins. The agent expects pre-validated input - clarifying questions should be asked by the orchestrating command BEFORE launching this agent.
-
-Examples:
-
-<example>
-Context: User describes a detailed feature idea.
-user: "I want to add a user authentication system with social login options including Google and GitHub, email/password, and magic links for passwordless login"
-assistant: "Let me use the Task tool to launch the product-spec-writer agent to create a comprehensive product specification for this authentication feature."
-<commentary>
-The user has described a feature with enough detail. Use the product-spec-writer agent to create the specification directly.
-</commentary>
-</example>
-
-<example>
-Context: The orchestrating command (/build-from-spec or /import-spec) has already gathered clarifications.
-user: "Here's the enriched spec with all the clarifications we discussed..."
-assistant: "I'll launch the product-spec-writer agent to transform this validated input into a formal product specification."
-<commentary>
-The input has been pre-validated by the orchestrating command. The agent proceeds directly to spec writing.
-</commentary>
-</example>
+description: "Use this agent when the user describes a new feature, product idea, or functionality they want to build. This agent should be triggered proactively whenever the user provides a feature description that needs to be fleshed out into a structured product specification before engineering work begins. The agent expects pre-validated input - clarifying questions should be asked by the orchestrating command BEFORE launching this agent.\n\nExamples:\n\n<example>\nContext: User describes a detailed feature idea.\nuser: \"I want to add a user authentication system with social login options including Google and GitHub, email/password, and magic links for passwordless login\"\nassistant: \"Let me use the Task tool to launch the product-spec-writer agent to create a comprehensive product specification for this authentication feature.\"\n<commentary>\nThe user has described a feature with enough detail. Use the product-spec-writer agent to create the specification directly.\n</commentary>\n</example>\n\n<example>\nContext: The orchestrating command (/build-from-spec or /import-spec) has already gathered clarifications.\nuser: \"Here's the enriched spec with all the clarifications we discussed...\"\nassistant: \"I'll launch the product-spec-writer agent to transform this validated input into a formal product specification.\"\n<commentary>\nThe input has been pre-validated by the orchestrating command. The agent proceeds directly to spec writing.\n</commentary>\n</example>"
 model: opus
 color: blue
 ---

@@ -1,29 +1,6 @@
 ---
 name: incremental-change-engineer
-description: Use this agent when you need to make incremental changes, refinements, or additions to a feature that was already built via the /build-from-spec workflow. This agent has full context of what was built by reading the feature's documentation folder, including the product spec, engineering spec, and completed ticket documentation. Perfect for touch-ups, bug fixes, small additions, or refinements after initial implementation.
-
-Examples:
-
-<example>
-Context: A feature was built yesterday and the user wants a small tweak.
-user: "The inspiration page we built yesterday needs the cards to have a subtle icon next to each topic"
-assistant: "I'll use the Task tool to launch the incremental-change-engineer agent. It will review the inspiration feature documentation to understand what was built, then make this refinement."
-<commentary>The user is requesting a modification to an existing feature. The agent will read the feature folder to understand the implementation before making changes.</commentary>
-</example>
-
-<example>
-Context: User found a bug in a recently implemented feature.
-user: "There's a bug in the collaboration feature - the share modal isn't closing properly"
-assistant: "Let me launch the incremental-change-engineer agent to investigate and fix this. It will review the collaboration feature documentation to understand the implementation context."
-<commentary>Bug fixes on recently built features benefit from the agent understanding the original implementation intent.</commentary>
-</example>
-
-<example>
-Context: User wants to add something small to an existing feature.
-user: "Can you add a 'Technology' category to the inspiration page? Same format as the others."
-assistant: "I'll use the incremental-change-engineer agent to add this category. It will first review the inspiration feature documentation to match the existing patterns exactly."
-<commentary>Small additions should match existing patterns, which the agent discovers from the documentation.</commentary>
-</example>
+description: "Use this agent when you need to make incremental changes, refinements, or additions to a feature that was already built via the /build-from-spec workflow. This agent has full context of what was built by reading the feature's documentation folder, including the product spec, engineering spec, and completed ticket documentation. Perfect for touch-ups, bug fixes, small additions, or refinements after initial implementation.\n\nExamples:\n\n<example>\nContext: A feature was built yesterday and the user wants a small tweak.\nuser: \"The inspiration page we built yesterday needs the cards to have a subtle icon next to each topic\"\nassistant: \"I'll use the Task tool to launch the incremental-change-engineer agent. It will review the inspiration feature documentation to understand what was built, then make this refinement.\"\n<commentary>The user is requesting a modification to an existing feature. The agent will read the feature folder to understand the implementation before making changes.</commentary>\n</example>\n\n<example>\nContext: User found a bug in a recently implemented feature.\nuser: \"There's a bug in the collaboration feature - the share modal isn't closing properly\"\nassistant: \"Let me launch the incremental-change-engineer agent to investigate and fix this. It will review the collaboration feature documentation to understand the implementation context.\"\n<commentary>Bug fixes on recently built features benefit from the agent understanding the original implementation intent.</commentary>\n</example>\n\n<example>\nContext: User wants to add something small to an existing feature.\nuser: \"Can you add a 'Technology' category to the inspiration page? Same format as the others.\"\nassistant: \"I'll use the incremental-change-engineer agent to add this category. It will first review the inspiration feature documentation to match the existing patterns exactly.\"\n<commentary>Small additions should match existing patterns, which the agent discovers from the documentation.</commentary>\n</example>"
 model: opus
 color: cyan
 ---
