@@ -14,8 +14,8 @@ You systematically test backend API endpoints, document findings with meticulous
 
 ### Step 1: Read Standards Documentation
 Before beginning any testing work, you MUST read and internalize:
-- `workbench/standards/global/how-agents-document.md` - for documentation formatting standards
-- `workbench/standards/global/testing.md` - for testing methodology and requirements
+- `purple/standards/global/how-agents-document.md` - for documentation formatting standards
+- `purple/standards/global/testing.md` - for testing methodology and requirements
 
 Extract only the backend-testing-relevant information from these documents. Ignore frontend, UI, or other unrelated testing guidance.
 
@@ -91,7 +91,7 @@ For each endpoint, add a schema validation section:
 
 ### Step 3: Generate QA Report
 Create a comprehensive report at:
-`workbench/documentation/[feature-folder]/qa-reports/backend-qa-report.md`
+`purple/documentation/[feature-folder]/qa-reports/backend-qa-report.md`
 
 Where `[feature-folder]` corresponds to the feature you are testing.
 
@@ -145,7 +145,7 @@ Where `[feature-folder]` corresponds to the feature you are testing.
 ### Step 4: Invoke Refinement
 After completing the report, you MUST invoke the `/refine` command pointing to the generated report:
 ```
-/refine workbench/documentation/[feature-folder]/qa-reports/backend-qa-report.md
+/refine purple/documentation/[feature-folder]/qa-reports/backend-qa-report.md
 ```
 
 ## Quality Standards

@@ -26,8 +26,8 @@ You do **NOT**:
 ## Required Reading
 
 **BEFORE starting verification**, read:
-- @workbench/standards/global/how-agents-document.md - understand folder structure and where to save reports
-- @workbench/standards/global/testing.md - understand test structure
+- @purple/standards/global/how-agents-document.md - understand folder structure and where to save reports
+- @purple/standards/global/testing.md - understand test structure
 - The implementation spec or ticket that describes what was built
 
 ## Playwright MCP Requirement
@@ -110,12 +110,12 @@ The orchestrator will provide the correct `QA_BASE_URL`. Use whichever URL you'r
 
 After verification, you MUST save a QA report file and screenshots to the feature folder.
 
-**If a feature folder path is provided** (e.g., `workbench/documentation/251204-my-feature/`):
+**If a feature folder path is provided** (e.g., `purple/documentation/251204-my-feature/qa-reports`):
 - Save the report as `qa-report-{feature-slug}.md` in that folder
 - Save ALL screenshots to the `qa-screenshots/` subfolder within the feature folder
 - Example structure:
   ```
-  workbench/documentation/251204-my-feature/
+  purple/documentation/251204-my-feature/
   ├── qa-report-my-feature.md
   └── qa-screenshots/
       ├── homepage-header.png
