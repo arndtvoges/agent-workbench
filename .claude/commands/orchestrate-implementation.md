@@ -36,8 +36,39 @@ During/after execution of this command:
    - Files created/modified per ticket
    - Potential conflicts and cohesion requirements
 
-5. **Call Purple MCP**: Announce phases and tickets
-  - Call the Purple MCP to announce all phases and tickets and their relevant metadata. This allows external progress tracking.
+5. **Call Purple MCP**: Announce phases and tickets using the unified `purple_status` tool:
+
+   **First, set the feature folder:**
+   ```json
+   {
+     "featureFolder": "purple/documentation/{feature-folder}",
+     "phase": "3 - Implementation",
+     "agent": "orchestrator",
+     "totalTickets": <total count>
+   }
+   ```
+
+   **Then announce each ticket with full metadata:**
+   ```json
+   {
+     "ticket": {
+       "id": "TICKET-001",
+       "name": "Ticket name",
+       "description": "What this ticket implements",
+       "phase": "Phase 1: Setup",
+       "acceptance": ["Criteria 1", "Criteria 2"],
+       "status": { "status": "todo" },
+       "dependencies": [{"id": "TICKET-000", "phase": "Phase 0"}],
+       "estimatedEffort": {
+         "humanEffort": "30 minutes",
+         "purpleEffort": "5 minutes"
+       }
+     }
+   }
+   ```
+
+   The Purple CLI automatically creates and updates `progress.json` based on these MCP calls.
+   No manual file writing needed - the Go server handles persistence.
 
 ---
 
@@ -56,6 +87,8 @@ FOR each phase in implementation_spec.phases:
        - Each agent receives: ticket details, relevant standards, cohesion context
        - Each agent writes completion summary to:
          `completed-tickets-documentation/{phase}-{ticket#}-{slug}-documentation.md`
+       - Agents call `purple_status` with `ticket.status.status: "in_progress"` and `"completed"`
+         (progress.json is updated automatically by Purple CLI)
 
     3. WAIT for all agents in phase to complete
 
@@ -95,6 +128,22 @@ AFTER all phases complete → enter QA Loop
 
 After all implementation phases complete, validate the feature through automated testing.
 
+**Update QA status in the progress panel using `purple_status`:**
+```json
+{
+  "qaActive": true,
+  "qaRunNumber": 1,
+  "qaCurrentTest": "Running unit tests"
+}
+```
+
+Update `qaCurrentTest` as you move through different test phases. When QA completes:
+```json
+{
+  "qaActive": false
+}
+```
+
 ```
 attempt_count = 0
 
@@ -106,12 +155,17 @@ LOOP:
        - Has API endpoints → include API QA agent
        - Has CLI commands  → include CLI QA agent
 
-    2. EXECUTE tests via appropriate QA agents
+    2. UPDATE QA status via `purple_status`:
+       - Set `qaActive: true`, `qaRunNumber: attempt_count`
+       - Update `qaCurrentTest` as tests progress
+
+    3. EXECUTE tests via appropriate QA agents
        → Results written to `purple/documentation/{feature-folder}/qa-results/`
 
-    3. EVALUATE results:
+    4. EVALUATE results:
 
        IF all tests pass:
+           → Set `qaActive: false` via `purple_status`
            → EXIT loop
            → Report success to user
 
