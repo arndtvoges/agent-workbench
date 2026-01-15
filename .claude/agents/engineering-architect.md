@@ -199,6 +199,50 @@ If you encounter:
 
 Clearly flag these issues in a "Blockers & Questions" section at the top of your document.
 
+## Reporting to Purple MCP
+
+**CRITICAL: After writing your complete engineering spec, you MUST announce ALL tickets to Purple at once.**
+
+This is NOT optional - senior engineers need to see the full ticket tree before implementation starts.
+
+**Workflow:**
+1. Write your complete engineering spec to the markdown file
+2. THEN call `purple_status` once for EACH ticket you defined (in rapid succession)
+3. Do NOT wait until implementation - announce tickets immediately after spec is written
+
+**For each ticket**, call `purple_status`:
+
+```json
+{
+  "featureFolder": "purple/documentation/{feature-slug}",
+  "agent": "engineering-architect",
+  "ticket": {
+    "id": "CMS-001",
+    "name": "Blog Post Form Component",
+    "description": "Create reusable form component for blog post creation and editing",
+    "phase": "Phase 1: UI Components",
+    "acceptance": [
+      "Form handles title, content, and status fields",
+      "Supports draft and published states",
+      "Validates required fields before submission"
+    ],
+    "status": { "status": "todo" },
+    "dependencies": [
+      { "id": "CMS-002", "phase": "Phase 1: UI Components" }
+    ],
+    "estimatedEffort": {
+      "purpleEffort": "10 minutes"
+    }
+  }
+}
+```
+
+**Important notes:**
+- `ticket.phase` is the ENGINEERING phase from your spec (e.g., "Phase 1: Database", "Phase 2: API Layer") - NOT the Purple pipeline phase
+- Call this for EVERY ticket in your spec, not just the first one
+- All tickets should have `status: { "status": "todo" }` initially
+- Dependencies reference other ticket IDs within the same or earlier phases
+
 ## Output Requirements
 
 **CRITICAL**: You MUST write your final engineering specification to a markdown file before completing your work:
