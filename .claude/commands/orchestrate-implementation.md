@@ -1,6 +1,6 @@
 ---
 argument-hint: [feature-folder-path]
-description: Orchestrate parallel senior engineers to implement tasks from engineering spec (project)
+description: "Step 3: Spawn parallel senior engineers to implement all tickets"
 model: claude-sonnet-4-5
 ---
 
@@ -8,16 +8,58 @@ model: claude-sonnet-4-5
 
 Your goal is to take the engineering implementation specification and orchestrate multiple senior engineer agents working in parallel to efficiently implement all tasks while maintaining consistency and architectural integrity.
 
+---
+
+## Progress Tracking
+
+**CRITICAL**: You MUST use `progress.json` for accurate progress tracking. This file is the single source of truth for implementation status.
+
+### Reading Progress
+
+At the start of orchestration:
+1. Read `{feature-folder}/progress.json`
+2. Parse phases and tickets from the file
+3. Use this data for orchestration planning
+
+### Updating Progress
+
+- Use `purple_progress_start_ticket` when assigning a ticket to an agent
+- Use `purple_progress_complete_ticket` when a ticket is done
+- Update phase status when all tickets in a phase complete
+
+### Status Bar Updates
+
+Also update the Purple CLI status bar for visual feedback:
+- `purple_update_status` - Full status update with all fields
+- `purple_set_phase` - Quick helper to set just the phase
+- `purple_report_progress` - Report ticket progress
+
+**At start of orchestration**, call `purple_update_status` with:
+- phase: "3 - Implementation"
+- agent: "orchestrator"
+- mode: "plan"
+- currentTicket: 0
+- totalTickets: {from progress.json summary}
+
+**As tickets complete**, the progress.json file will be updated by senior-engineer agents. Read it periodically to get accurate counts.
+
+See `@workbench/standards/global/how-agents-document.md` for the full progress.json schema.
+
+---
+
 # Steps to strictly follow:
 
 1) **Validate Input**: Make sure you have been provided with $1 (the path to the feature documentation folder, e.g., `documentation/251114-analytics-dashboard`). If not, complain immediately and abort.
 
 2) **Read Documentation Standards**: Read @workbench/standards/global/how-agents-document.md to understand the folder structure. If it doesn't exist, complain immediately and abort.
 
-3) **Locate Implementation Spec**: Find and verify that the following file exists in the provided folder:
+3) **Locate Implementation Spec and Progress File**: Find and verify that the following files exist in the provided folder:
    - `{feature-folder}/agent-written-specifications/implementation-spec-{feature-slug}.md`
+   - `{feature-folder}/progress.json`
 
-   If this file doesn't exist, complain and abort, informing the user to run `/engineer-tasks-from-spec` first.
+   If these files don't exist, complain and abort, informing the user to run `/engineer-tasks-from-spec` first.
+
+   **Read progress.json** to get the current state of all phases and tickets. Use this as your source of truth for what needs to be implemented.
 
 4) **Read Engineering Standards**: Read all relevant standards from the `./workbench/standards/` directory to understand:
    - Tech stack and architecture patterns
@@ -78,6 +120,7 @@ Your goal is to take the engineering implementation specification and orchestrat
 
 9) **Monitor and Coordinate**: After each phase completes:
    - Verify all tickets in the phase are completed
+   - **Update status with current progress**: Call `purple_report_progress` with updated current/total ticket counts
    - Check for consistency across related components
    - Validate integration points between agent work
    - Run tests if specified in the implementation spec

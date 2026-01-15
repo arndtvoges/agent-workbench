@@ -1,7 +1,8 @@
 ---
 argument-hint: [optional-user-context]
-description: Create engineering standards from existing codebase or from scratch
+description: "Generate coding standards docs by analyzing the existing codebase"
 model: claude-sonnet-4-5
+---
 
 # Engineering Standards Creator
 

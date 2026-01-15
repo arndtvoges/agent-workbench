@@ -1,12 +1,32 @@
 ---
 argument-hint: [feature-folder-path]
-description: Create engineering implementation plan from product spec (project)
+description: "Step 2: Read product spec, create engineering architecture + numbered tickets"
 model: claude-sonnet-4-5
 ---
 
 # Create Engineering Implementation Plan
 
 Your goal is to take the agent-written product specification and transform it into a detailed engineering implementation plan with phased tickets.
+
+---
+
+## Status Reporting
+
+**CRITICAL**: You MUST update the Purple CLI status bar using MCP tools.
+
+Available MCP tools for status updates:
+- `purple_update_status` - Full status update with all fields (phase, agent, mode, currentTicket, totalTickets, tool, activeFile)
+- `purple_set_phase` - Quick helper to set just the phase
+- `purple_report_progress` - Report ticket progress (current, total)
+
+**At start of this command**, call `purple_update_status` with:
+- phase: "2 - Architecture"
+- agent: "engineering-architect"
+- mode: "plan"
+
+See `@workbench/standards/global/how-agents-document.md` for more details.
+
+---
 
 # Steps to strictly follow:
 
@@ -33,13 +53,17 @@ Your goal is to take the agent-written product specification and transform it in
    - Point to the agent-written product spec
    - Point to the user technical spec (if exists)
    - Provide all relevant engineering standards
-   - Request creation of `implementation-spec-{feature-slug}.md` in the `agent-written-specifications` folder
+   - Request creation of BOTH:
+     - `implementation-spec-{feature-slug}.md` in the `agent-written-specifications` folder
+     - `progress.json` in the feature folder root
 
    The engineering-architect should create a phased implementation plan with specific tickets that can be handed to implementation engineers.
 
 # Output Location
 
-The engineering-architect agent must create:
+The engineering-architect agent must create TWO files:
+
+### 1. Implementation Spec
 `{feature-folder}/agent-written-specifications/implementation-spec-{feature-slug}.md`
 
 This file should contain:
@@ -50,3 +74,16 @@ This file should contain:
 - Dependencies and sequencing
 - Testing strategy
 - Deployment considerations
+
+### 2. Progress Tracking File
+`{feature-folder}/progress.json`
+
+This file tracks implementation progress and must contain:
+- All phases from the implementation spec
+- All tickets with IDs and names
+- Initial status of "pending" for all items
+- Summary counts
+
+See `@workbench/standards/global/how-agents-document.md` for the full schema.
+
+**IMPORTANT**: Both files are required. The `/orchestrate-implementation` command will fail if progress.json doesn't exist.

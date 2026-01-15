@@ -12,6 +12,24 @@ This command invokes the `incremental-change-engineer` agent after determining w
 
 ---
 
+## Status Reporting
+
+**CRITICAL**: You MUST update the Purple CLI status bar using MCP tools.
+
+Available MCP tools for status updates:
+- `purple_update_status` - Full status update with all fields (phase, agent, mode, currentTicket, totalTickets, tool, activeFile)
+- `purple_set_phase` - Quick helper to set just the phase
+- `purple_report_progress` - Report ticket progress (current, total)
+
+**At start of refinement**, call `purple_update_status` with:
+- phase: "Refinement"
+- agent: "incremental-change-engineer"
+- mode: "execute"
+
+See `@workbench/standards/global/how-agents-document.md` for more details.
+
+---
+
 ## Input
 
 **$1** (required): A description of the change to make. Examples:
@@ -86,7 +104,7 @@ Read the following files from the identified feature folder (in order):
 2. **Product Spec**: `agent-written-specifications/agent-written-product-spec-{feature-slug}.md`
 3. **Engineering Spec**: `agent-written-specifications/implementation-spec-{feature-slug}.md`
 4. **Completed Work**: All files in `completed-tickets-documentation/`
-5. **QA Results**: `qa-report-{feature-slug}.md` (if exists)
+5. **QA Results**: `qa-report-{feature-slug}.md` (if exists) - Testing results and known issues
 6. **Previous Changes**: `incremental-changes.md` (if exists)
 
 ### Step 7: Identify Relevant Source Files
@@ -157,11 +175,12 @@ Remember: Your change should look like it was part of the original implementatio
 After the agent completes:
 1. Check that `incremental-changes.md` was created/updated
 2. Verify lint and type checks passed
-3. Summarize what was changed
+3. Collect the list of modified files from the agent's output
+4. Summarize what was changed
 
 ### Step 10: Final Report
 
-Provide a brief summary to the user:
+Provide a summary to the user:
 
 ```
 ## Refinement Complete

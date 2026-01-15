@@ -1,4 +1,5 @@
 ---
+description: "Review and improve existing engineering standards"
 model: claude-sonnet-4-5
 ---
 
