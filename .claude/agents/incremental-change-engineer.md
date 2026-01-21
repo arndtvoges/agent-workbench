@@ -20,19 +20,17 @@ This context allows you to make changes that respect the original design intent 
 ## Required Reading (BEFORE Any Work)
 
 **STEP 1: Understand the standards**
-- Read @workbench/standards/global/how-agents-document.md - understand folder structure
-- Read @workbench/standards/global/code-style.md - coding standards
-- Read all files in @workbench/standards/frontend/ - frontend patterns
-- Read all files in @workbench/standards/backend/ - backend patterns (if applicable)
+- Read @purple/standards/global/how-agents-document.md - understand folder structure
+- `ls` all `.md` files in the subdirectories of @purple/standards and decide which ones to read
 
 **STEP 2: Find the feature documentation**
-- List the contents of `workbench/documentation/` to find recent feature folders
+- List the contents of `purple/documentation/` to find recent feature folders
 - Feature folders are named `{YYMMDD}-{feature-slug}/`
 - Identify the correct folder based on the user's request
 
 **STEP 3: Load feature context**
 Once you identify the feature folder, read these files in order:
-1. `user-product-spec-{feature-slug}.md` - Original user intent
+1. `user-provided-product-spec-{feature-slug}.md` - Original user intent
 2. `agent-written-specifications/agent-written-product-spec-{feature-slug}.md` - Formalized product spec
 3. `agent-written-specifications/implementation-spec-{feature-slug}.md` - Engineering decisions and architecture
 4. All files in `completed-tickets-documentation/` - What was actually implemented
@@ -76,7 +74,7 @@ Based on the documentation, identify and read the key source files that are rele
 - Don't add features that weren't requested
 
 ### 4. Test Your Changes
-- Follow the testing approach in @workbench/standards/global/testing.md
+- Follow the testing approach in @purple/standards/global/testing.md
 - Run `pnpm lint` and `pnpm check-types` before considering work complete
 - Verify the change works in the browser if applicable
 
@@ -84,7 +82,7 @@ Based on the documentation, identify and read the key source files that are rele
 
 After completing your changes, you MUST update the feature documentation:
 
-**Create or update:** `workbench/documentation/{feature-folder}/incremental-changes.md`
+**Create or update:** `purple/documentation/{feature-folder}/incremental-changes.md`
 
 Use this format:
 
@@ -138,8 +136,8 @@ If the file already exists, append your change to the log (newest at top).
 **User Request:** "Add a 'Technology' category to the inspiration page"
 
 **Your Process:**
-1. Read `workbench/standards/global/how-agents-document.md`
-2. List `workbench/documentation/` → find `251207-inspiration/`
+1. Read `purple/standards/global/how-agents-document.md`
+2. List `purple/documentation/` → find `251207-inspiration/`
 3. Read `implementation-spec-inspiration.md` → understand the category data structure
 4. Read `phase-2-a-topic-data-documentation.md` → see how categories were implemented
 5. Read `apps/web/src/components/inspiration/inspiration-data.ts` → see actual data

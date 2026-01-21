@@ -15,9 +15,8 @@ This command invokes the `incremental-change-engineer` agent after determining w
 ## Input
 
 **$1** (required): A description of the change to make. Examples:
-- "Add a Technology category to the inspiration page"
-- "Fix the modal not closing on the share feature"
-- "Make the topic cards have a hover shadow effect"
+- "Fix the modal implemented in ticket P1-EXAMPLE2 not closing on the share feature"
+- "Fix the linter errors in useSomething.ts"
 - "Add an icon next to each category title"
 
 ---
@@ -26,14 +25,14 @@ This command invokes the `incremental-change-engineer` agent after determining w
 
 ### Step 1: Read Documentation Standards
 
-Read @workbench/standards/global/how-agents-document.md to understand the folder structure.
+Read @purple/standards/global/how-agents-document.md to understand the folder structure.
 
 ### Step 2: List Available Feature Folders
 
-List all feature folders in `workbench/documentation/`:
+List all feature folders in `purple/documentation/`:
 
 ```bash
-ls -la workbench/documentation/
+ls -la purple/documentation/
 ```
 
 Feature folders follow the pattern `{YYMMDD}-{feature-slug}/`.
@@ -41,6 +40,7 @@ Feature folders follow the pattern `{YYMMDD}-{feature-slug}/`.
 ### Step 3: Analyze the Change Request
 
 Parse $1 to identify keywords that might match a feature:
+- Look for ticket name passed to you (eg. AUTH-IMP-1)
 - Look for feature names (e.g., "inspiration", "collaboration", "share", "app-view")
 - Look for component names (e.g., "modal", "card", "sidebar", "dialog")
 - Look for page names (e.g., "inspiration page", "dashboard", "pricing")
@@ -50,7 +50,7 @@ Parse $1 to identify keywords that might match a feature:
 **Strategy 1 - Direct Match**: If the change request mentions a specific feature name that matches a folder slug, use that folder.
 
 **Strategy 2 - Keyword Search**: If no direct match:
-1. Read the `user-product-spec-{slug}.md` from each recent feature folder (last 3-5 folders by date)
+1. Read though all `implementation-spec-{feature-slug}.md` you can find (created at desc)
 2. Scan for keywords from the change request
 3. Select the best matching feature
 
@@ -82,12 +82,11 @@ Which feature should I modify?
 
 Read the following files from the identified feature folder (in order):
 
-1. **User Intent**: `user-product-spec-{feature-slug}.md`
-2. **Product Spec**: `agent-written-specifications/agent-written-product-spec-{feature-slug}.md`
-3. **Engineering Spec**: `agent-written-specifications/implementation-spec-{feature-slug}.md`
-4. **Completed Work**: All files in `completed-tickets-documentation/`
-5. **QA Results**: `qa-report-{feature-slug}.md` (if exists)
-6. **Previous Changes**: `incremental-changes.md` (if exists)
+1. **User Intent**: `purple/documentation/{feature-slug}/user-provided-product-spec-{feature-slug}.md`
+2. **Product Spec**: `purple/documentation/agent-written-specifications/agent-written-product-spec-{feature-slug}.md`
+3. **Engineering Spec**: `purple/documentation/agent-written-specifications/implementation-spec-{feature-slug}.md`
+4. **Completed Work**: All files in `purple/documentation/{feature-slug}/completed-tickets-documentation/`
+5. **QA Results**: `purple/documentation/{feature-slug}/qa-results/*.md` (if exists)
 
 ### Step 7: Identify Relevant Source Files
 
@@ -123,7 +122,7 @@ Make the following change to the {feature-slug} feature:
 
 ## Feature Context
 
-**Feature Folder:** workbench/documentation/{YYMMDD}-{feature-slug}/
+**Feature Folder:** purple/documentation/{YYMMDD}-{feature-slug}/
 
 **What This Feature Does:**
 {Brief summary from product spec}
@@ -143,7 +142,7 @@ Make the following change to the {feature-slug} feature:
 1. Read the feature documentation to fully understand the implementation
 2. Make the requested change following existing patterns
 3. Run `pnpm lint` and `pnpm check-types`
-4. Update `workbench/documentation/{feature-folder}/incremental-changes.md` with your changes
+4. Update `purple/documentation/{feature-folder}/incremental-changes.md` with your changes
 
 Remember: Your change should look like it was part of the original implementation.
 ```
@@ -172,7 +171,7 @@ Provide a brief summary to the user:
 **Files Modified:**
 - {list of files}
 
-**Documentation:** Updated in `workbench/documentation/{feature-folder}/incremental-changes.md`
+**Documentation:** Updated in `purple/documentation/{feature-folder}/incremental-changes.md`
 
 **Next Steps:**
 - Test the change locally at {relevant URL}
@@ -185,7 +184,7 @@ Provide a brief summary to the user:
 
 ### No Feature Folders Found
 ```
-Error: No feature documentation found in workbench/documentation/
+Error: No feature documentation found in purple/documentation/
 
 This command requires features to have been built via /build-from-spec.
 Please run /build-from-spec first to create a feature with documentation.
