@@ -6,6 +6,15 @@ model: claude-opus-4-5
 
 # Build From Spec - Complete End-to-End Pipeline
 
+## Workspace Structure
+
+**IMPORTANT:** Before starting, understand the workspace structure:
+- **`/repos/`** - Contains the actual codebase(s) you'll be building into. Explore this directory first to understand the project structure, existing patterns, and tech stack.
+- **`/purple/documentation/`** - Where feature documentation is stored (specs, tickets, QA reports)
+- **`/purple/standards/`** - Engineering standards and coding conventions to follow
+
+**First Step:** Always run `ls repos/` and explore the codebase structure before writing any specs or code. Understanding the existing codebase is critical for writing accurate specifications and implementation.
+
 ## STRICTLY follow ALL these steps
 Your goal is to take a user's initial idea/specification and run the orchestrate the following workflow. YOUR JOB IS NOT DONE UNTIL YOU COMPLETE ALL STAGES.
 
