@@ -8,6 +8,27 @@ model: claude-sonnet-4-5
 
 Your goal is to take the engineering implementation specification and orchestrate multiple senior engineer agents working in parallel to efficiently implement all tasks while maintaining consistency and architectural integrity.
 
+---
+
+## CRITICAL: Stay Alive While Agents Work
+
+**When you spawn agents via the Task tool, you MUST remain active and waiting for their results.**
+
+**DO NOT:**
+- End your turn or consider yourself "done" while agents are still running
+- Output a final summary until ALL spawned agents have returned results
+- Say "agents are working, I'll wait" and then stop - you must actually wait
+
+**DO:**
+- Keep waiting indefinitely - agents may take a long time to complete
+- The Task tool will return results when agents finish
+- Stay in the conversation and wait for those results before proceeding
+
+**WRONG:** Spawn agents → Output "agents are working..." → End turn
+**RIGHT:** Spawn agents → Wait for results → Process results → Continue or summarize
+
+---
+
 ## Inputs & results
 
 Before execution:

@@ -15,12 +15,34 @@ model: claude-opus-4-5
 
 **First Step:** Always run `ls repos/` and explore the codebase structure before writing any specs or code. Understanding the existing codebase is critical for writing accurate specifications and implementation.
 
-## STRICTLY follow ALL these steps
-Your goal is to take a user's initial idea/specification and run the orchestrate the following workflow. YOUR JOB IS NOT DONE UNTIL YOU COMPLETE ALL STAGES.
+## CRITICAL: AUTONOMOUS END-TO-END EXECUTION
+
+**YOU MUST RUN THIS ENTIRE PIPELINE WITHOUT STOPPING OR ASKING FOR PERMISSION TO CONTINUE.**
+
+This is a fully autonomous workflow. Once started, you will execute ALL phases from start to finish:
+1. `/import-spec` → 2. `/engineer-tasks-from-spec` → 3. `/orchestrate-implementation` → 4. QA Loop → 5. Final Summary
+
+**DO NOT:**
+- Stop after any phase and ask "Ready to continue?" or "Should I proceed?"
+- Wait for user confirmation between phases
+- Consider yourself "done" until you've completed ALL phases including the final MCP signal
+- End your turn while agents are still running
+
+**DO:**
+- Execute each phase immediately after the previous one completes
+- Only time you can stop is to ask questions to the user in phase 1
+- Keep working until you reach Step 26 (Signal Build Complete)
+- Stay active and waiting when agents are running - your turn is NOT complete until all agents return
+
+---
+
+## Pipeline Overview
 
 1. Run `/import-spec` with parameters [user-provided-product-specification] [optional-user-provided-technical-specification] - Setup and product spec writing
 2. Run `/engineer-tasks-from-spec` - Engineering architecture and task breakdown
 3. Run `/orchestrate-implementation` - Parallel implementation by senior engineers, followed by qa-fix loop
+
+---
 
 ## Phase-by-phase instructions
 
@@ -249,6 +271,22 @@ Present a final summary to the user that prominently highlights the manual setup
 2. Test the feature at {URL}
 3. Use `/refine` to make any adjustments
 ```
+
+---
+
+### Step 26: Signal Build Complete (REQUIRED)
+
+**CRITICAL:** After presenting the final summary, you MUST signal build completion to the Purple app via MCP.
+
+Call the `purple_status` tool with:
+```json
+{
+  "buildComplete": true,
+  "phase": "5 - Complete"
+}
+```
+
+This signal tells the Purple app that the entire build pipeline has finished, allowing it to transition the UI to the final phase. **Do not skip this step.**
 
 ---
 
