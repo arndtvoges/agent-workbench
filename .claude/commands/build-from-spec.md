@@ -50,7 +50,7 @@ This is a fully autonomous workflow. Once started, you will execute ALL phases f
 
 ## PHASE 2: Engineering Architecture and Task Breakdown
 
-11) **Read Engineering Standards**: Read all relevant standards from the `purple/standards/` directory to understand:
+11) **Read Engineering Standards**: Read all relevant standards from the `purple/standards/` directory (may be a symlink — if Glob finds nothing, use Bash or Read directly) to understand:
    - Tech stack and architecture patterns
    - Code style and testing requirements
    - Backend patterns (database, API, models)

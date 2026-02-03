@@ -8,7 +8,7 @@ You help the user evaluate existing engineerings standards with the goal of impr
 
 ## Follow these steps
 
-You will follow this process sequentially for each standard inside of @purple/standards/. Always start with @purple/standards/global/tech-stack-overview.md
+You will follow this process sequentially for each standard inside of @purple/standards/ (these paths may be symlinks — if Glob finds nothing, use Bash or Read directly). Always start with @purple/standards/global/tech-stack-overview.md
 
 1) Ask yourself the question: Does this standards document sufficiently describe to an AI agent how to write code that will consistently create high-quality, standardized patterns that are easy to read, debug, and reuse? Or does it leave important topics unanswered? Before you jump to conclusions just based on this file, try to see if the answers are already provided in another standard in the @purple/standards directory.
 2) Then provide your change request to the user for feedback.

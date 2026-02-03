@@ -57,7 +57,7 @@ You are required to keep the outside world informed about your progress using th
 ## Required Reading
 
 **BEFORE starting any implementation work**, you MUST read the project-specific coding guidelines:
-- Read all files in: @purple/standards/global
+- Read all files in: @purple/standards/global (these paths may be symlinks — if Glob finds nothing, use Bash or Read directly)
 - Then read all files in @purple/standards/backend
 - Then read all files in @purple/standards/frontend
 

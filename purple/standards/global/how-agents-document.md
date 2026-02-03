@@ -19,3 +19,5 @@ All agents use Markdown files to create specifications, and document their work.
         ... (repos that are relevant to this project) <-- Loaded by Purple CLI
 
 The project root is the base folder out of which agents operate, not a specific codebase inside of `repos`
+
+> **Note:** `purple/` may be a symlink. If Glob returns no results, use Bash or Read to access files directly.

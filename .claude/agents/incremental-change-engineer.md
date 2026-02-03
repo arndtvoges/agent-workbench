@@ -21,7 +21,7 @@ This context allows you to make changes that respect the original design intent 
 
 **STEP 1: Understand the standards**
 - Read @purple/standards/global/how-agents-document.md - understand folder structure
-- `ls` all `.md` files in the subdirectories of @purple/standards and decide which ones to read
+- `ls` all `.md` files in the subdirectories of @purple/standards and decide which ones to read (these paths may be symlinks — if Glob finds nothing, use Bash or Read directly)
 
 **STEP 2: Find the feature documentation**
 - List the contents of `purple/documentation/` to find recent feature folders

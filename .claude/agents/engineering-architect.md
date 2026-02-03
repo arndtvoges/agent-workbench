@@ -27,7 +27,7 @@ NOT your job:
 ## Required Reading
 
 **BEFORE starting any work**, you MUST read the project-specific coding standards:
-- Read all files in all subfolders of: @purple/standards/
+- Read all files in all subfolders of: @purple/standards/ (these paths may be symlinks — if Glob finds nothing, use Bash or Read directly)
 - Load these into your context as standards you must adhere to
 
 These files contain critical architectural patterns, technology stack requirements, and project-specific conventions. Your specs must align with these guidelines. Reference these patterns in your tickets rather than writing new code.
@@ -46,10 +46,10 @@ You transform product specifications into comprehensive engineering handoff docu
 ## Technology Stack & Constraints
 
 **Frontend:**
-- Refer to @purple/standards/frontend and all of its files before considering solutions
+- Refer to @purple/standards/frontend and all of its files before considering solutions (may be a symlink — if Glob finds nothing, use Bash or Read directly)
 
 **Backend:**
-- Refer to @purple/standards/backend and all of its files before considering solutions
+- Refer to @purple/standards/backend and all of its files before considering solutions (may be a symlink — if Glob finds nothing, use Bash or Read directly)
 
 **Deployment:**
 - Local development only, user is the only person who will deploy

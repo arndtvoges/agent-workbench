@@ -21,7 +21,7 @@ When you receive a feature description:
 0. **Understand your context**: Please load the entirety of the following files into your context. Think of these as homework to prepare for this job.
 - @purple/standards/global/how-agents-document.md
 - @purple/standards/global/tech-stack-overview.md
-- All files in @purple/standards/business/ folder
+- All files in @purple/standards/business/ folder (may be a symlink — if Glob finds nothing, use Bash or Read directly)
 
 1. **Check for Pre-Validation**: Look for indicators that the input has been pre-validated:
    - Presence of an "enriched specification" with clarifications already incorporated
