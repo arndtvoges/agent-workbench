@@ -68,120 +68,49 @@ This is a fully autonomous workflow. Once started, you will execute ALL phases f
 
 ---
 
-## PHASE 3: Orchestrated Implementation
+## PHASE 3: Orchestrated Implementation (Agent Teams)
 
-13) **Analyze Implementation Spec**: Parse the implementation spec to identify:
-   - All phases of implementation
-   - All tickets within each phase
-   - Dependencies between tickets
-   - Files that will be created or modified by each ticket
-   - Potential conflicts (multiple tickets modifying the same file)
-   - Cohesion requirements (components that need consistent implementation)
+> **Note:** Phase 3 uses **Agent Teams**. The orchestrator creates a team, spawns engineer teammates, and coordinates via shared task lists and inter-agent messaging. The team is created at the start of Phase 3 and destroyed at the end (after QA completes). This replaces the previous one-shot subagent approach.
 
-14) **Intelligent Task Grouping**: Analyze tasks to determine optimal grouping:
-   - **Identify Cohesive Units**: Group related components that should share similar styling, data structures, or patterns
-   - **Analyze Separable Work**: Identify truly independent tasks that can be parallelized
-   - **Respect Natural Boundaries**: Group by feature cohesion, layer cohesion, or data flow
-   - **Balance Load**: Ensure each agent gets a reasonable amount of work
+13) **Invoke `/orchestrate-implementation`** with the feature folder path. The orchestrator will:
 
-15) **Create Smart Orchestration Plan**: Design an intelligent parallelization strategy:
-    - Phase Planning: Respect dependencies but maximize parallelism within phases
-    - Agent Assignment: One agent per cohesive unit, specialized agents for distinct domains
-    - Consistency Instructions: Clear guidelines about patterns, styling, integration points
-    - Conflict Prevention: Assign clear file ownership
+14) **Create Agent Team**: Create a team named `impl-{feature-slug}` and populate the shared task list with ALL tickets from the implementation spec, mapped with proper dependency chains.
 
-16) **Launch Senior Engineer Agents**: For each phase:
-    - Use a SINGLE message with multiple Task tool calls to launch parallel agents
-    - Assign cohesive work units to each agent
-    - Provide full context (spec excerpts, standards, patterns to follow)
-    - Define clear ownership boundaries and cross-agent contracts
+15) **Spawn Engineer Teammates**: Calculate team size (1-4 engineers based on ticket count), assign ownership zones (grouping by file overlap, dependencies, and layer cohesion), and spawn all engineers in parallel. Each engineer reads standards, claims tasks from the shared list, and works autonomously.
 
-17) **Monitor and Coordinate**: After each phase completes:
-    - Verify all tickets in the phase are completed
-    - Check for consistency across related components
-    - Validate integration points between agent work
-    - Run tests if specified
-    - Move to the next phase
+16) **Monitor and Coordinate via Team Communication**:
+    - Receive auto-delivered messages from engineer teammates (completions, blockers, interface changes)
+    - Check `TaskList` for overall progress
+    - Handle blocker escalations (classify as blocking vs correctable)
+    - Forward interface change notifications to affected engineers
+    - Engineers self-claim unblocked tasks as they complete their current work
+
+17) **QA as Team Members**: After all implementation tasks complete, QA agents are spawned as additional teammates on the same team. They communicate failures **directly to the responsible engineers** via messaging. Engineers fix issues with full context (no `/refine` middleman). Max 3 QA attempts.
+
+18) **Shutdown and Cleanup**: After QA passes (or 3 attempts exhausted), shut down all teammates and clean up the team before proceeding to Phase 4.
 
 ---
 
-## PHASE 4: QA Verification Loop (Conditional)
+## PHASE 4: QA Verification (Handled by Agent Team)
 
-This phase runs a QA → Fix → QA loop with a maximum of 3 attempts to ensure the implementation works correctly.
+> **Note:** QA is now handled WITHIN the Agent Team in Phase 3. The `/orchestrate-implementation` command spawns QA agents as teammates after all implementation tasks complete. QA agents communicate failures directly to engineer teammates, who fix issues with full context. The `/refine` command is NOT used during team-based QA.
 
-**IMPORTANT:** This phase is **conditional** and should only run if:
-1. The project has a web interface (frontend, web app, etc.)
-2. The implementation includes visual/UI changes that can be verified in a browser
+**QA is conditional** -- it only runs if the feature has testable surfaces:
+- Web UI → qa-agent-web teammate
+- API endpoints → qa-agent-api teammate
+- CLI commands → qa-agent-cli teammate
 
-**Skip QA if:**
-- The project is a CLI tool, library, or backend-only service
-- The implementation is purely backend/API changes with no UI
-- There are no web pages or components to visually verify
+**Skip QA if:** The project is backend-only with no testable interface. Note in final summary: "QA skipped."
 
-If QA is skipped, proceed directly to PHASE 5 (Manual Setup Documentation) and note in the final summary: "QA skipped - no visual/UI changes to verify."
+**QA environment setup** (dev server, etc.) is handled by the orchestrator before spawning QA teammates.
 
-### Step 18: Prepare QA Environment
+**Max 3 QA attempts.** The QA → Fix → QA loop runs within the team:
+```
+QA teammate finds failures → messages specific engineers → engineers fix →
+QA re-runs full suite → repeat up to 3 times
+```
 
-- Check if the project has a dev server command (usually `pnpm dev`, `npm run dev`, or similar)
-- If a dev server is already running, use it
-- If not running, start it in the background and wait for it to be ready
-- Set `QA_BASE_URL` to the local dev server URL (typically `http://localhost:3000` or similar)
-
----
-
-### Step 19: Initialize QA Loop
-
-Set attempt counter to 1. Maximum attempts = 3.
-
----
-
-### Step 20: Launch QA Engineer
-
-Invoke the `qa-engineer` agent to perform basic visual verification:
-- Provide the **feature folder path** (e.g., `purple/documentation/251204-{feature-slug}/`)
-- Provide the **feature slug** for naming the report file
-- Provide context about what was built (summary of implemented features)
-- List the key pages/components that were created or modified
-- Specify the URL(s) to check: `{QA_BASE_URL}` + relevant paths
-- Include the current attempt number (e.g., "QA Attempt 1 of 3")
-
-The QA engineer will:
-- Navigate to the implemented pages using Playwright MCP
-- Take screenshots to verify rendering (saved to `{feature-folder}/qa-screenshots/`)
-- Check browser console for errors or warnings
-- Verify new UI components actually appear on screen
-- Test basic interactions (buttons click, dialogs open, etc.)
-- **Save a QA report** to `{feature-folder}/qa-report-{feature-slug}.md`
-- Clearly indicate PASS or FAIL status with specific issues listed
-
----
-
-### Step 21: Review QA Results and Decide
-
-- Read the QA report from `{feature-folder}/qa-report-{feature-slug}.md`
-- If **PASS**: Proceed to step 23 (completion)
-- If **FAIL** and attempt < 3: Proceed to step 22 (fix issues)
-- If **FAIL** and attempt = 3: Proceed to step 23 with failure note
-
----
-
-### Step 22: Fix Issues (only if QA failed and attempts remaining)
-
-- Analyze the specific issues reported in the QA report
-- Launch a `senior-engineer` agent to fix ONLY the reported issues:
-  - Provide the exact error descriptions from the QA report
-  - Specify which files likely need changes
-  - Instruct to make minimal, targeted fixes (not refactoring)
-- After fixes are applied, increment attempt counter
-- Return to step 20 (run QA again)
-
----
-
-### Step 23: Finalize QA Phase
-
-- Ensure a final QA report exists in `{feature-folder}/qa-report-{feature-slug}.md`
-- The final report should reflect the last QA run
-- If all attempts failed, the report should clearly document remaining issues
+After QA completes (pass or fail), the team is shut down and cleaned up.
 
 ---
 
@@ -290,27 +219,28 @@ This signal tells the Purple app that the entire build pipeline has finished, al
 
 ---
 
-**QA Loop Summary**:
+**QA Loop Summary** (runs within the Agent Team):
 ```
 [Start dev server if needed]
      ↓
-Attempt 1: QA → if FAIL → Fix →
-Attempt 2: QA → if FAIL → Fix →
-Attempt 3: QA → Done (pass or fail)
+Attempt 1: QA teammate tests → if FAIL → messages engineers → engineers fix →
+Attempt 2: QA re-tests → if FAIL → messages engineers → engineers fix →
+Attempt 3: QA re-tests → Done (pass or fail) → Shutdown team
 ```
 
-**Note**: This is a quick sanity check loop, not comprehensive testing. The goal is to catch and fix obvious issues like missing components, console errors, or broken layouts within 3 attempts.
+**Note**: QA agents communicate failures directly to the engineer who built the broken component. No `/refine` middleman during team builds. Engineers fix their own code with full context.
 
 ---
 
 # Key Principles:
 
 - **Sequential Handoffs**: Each phase must complete before starting the next
+- **Agent Teams for Implementation**: Phase 3 uses Agent Teams with shared task lists and inter-agent messaging
 - **Cohesion Over Speed**: Group related work together - consistency is more important than parallelism
 - **Natural Work Units**: Respect logical boundaries in the codebase
-- **File Isolation**: When work CAN be separated, assign different files to different agents
-- **Clear Ownership**: Each agent owns complete features or layers, not fragments
-- **True Parallelism**: Use a single message with multiple Task tool calls within phases
+- **Ownership Zones**: Each engineer teammate owns a set of related tickets, assigned by the lead
+- **Self-Claiming Tasks**: Engineers claim unblocked tasks from the shared list after completing their zone
+- **Direct QA Communication**: QA teammates message specific engineers about failures -- no intermediaries
 
 # Output Locations:
 

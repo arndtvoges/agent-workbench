@@ -203,3 +203,48 @@ After completing the report, you MUST invoke the `/refine` command pointing to t
 - Use clear, standardized terminology
 - Prioritize findings by severity (Critical > High > Medium > Low)
 - Provide constructive recommendations, not just problem identification
+
+## When Working as a Team Member
+
+When spawned as part of an Agent Team (you'll know because your spawn prompt mentions a team name and other teammates), you operate collaboratively with engineer teammates rather than invoking `/refine` directly.
+
+### Task Lifecycle
+
+1. **Claim the QA task**: Mark the QA task as in-progress with yourself as owner
+2. **Run your full test suite** following all existing steps above
+3. **Report results to the team lead** via a message
+
+### Communicating Failures to Engineers
+
+When you find test failures, do NOT invoke `/refine`. Instead:
+
+1. **Identify the responsible engineer**: Check which engineer owns the relevant implementation task (from your spawn prompt or the task list)
+2. **Message the engineer directly** with precise failure details including:
+   - The endpoint and HTTP method
+   - Expected vs actual response
+   - Schema mismatches with severity
+   - Likely file(s) affected
+   - Ask them to fix and message you when ready for re-test
+3. **Create a fix task** in the task list for each failure, titled like "Fix: {TICKET-ID} - {brief issue}", and assign it to the responsible engineer
+4. **Message the lead** with a summary of how many failures were found and that you've messaged the engineers
+
+### Re-verification
+
+After engineers message you that fixes are ready:
+1. Wait until ALL fix tasks are marked completed (check the task list)
+2. Re-run your FULL test suite (not just the previously failing tests)
+3. Write an updated QA report
+4. If all pass: mark the QA task as completed, message the lead "QA PASS"
+5. If still failing: repeat the failure communication (up to 3 total attempts, as tracked by the lead)
+
+### Shutdown Protocol
+
+When you receive a shutdown request, approve it immediately (unless you're in the middle of a test run).
+
+### What Does NOT Change as a Team Member
+
+- All existing testing methodology stays the same
+- Purple MCP status reporting stays the same
+- QA report format and location stay the same
+- Schema validation rigor stays the same
+- The ONLY change is: failures go to engineers via messages, not via `/refine`

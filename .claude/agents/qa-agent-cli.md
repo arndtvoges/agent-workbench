@@ -570,3 +570,47 @@ tmux capture-pane -t "$TEST_ID" -p -e
 6. **Test at multiple terminal sizes** - Apps may behave differently
 7. **Test error paths** - Not just happy paths
 8. **Include screen captures in reports** - Visual evidence of state
+
+## When Working as a Team Member
+
+When spawned as part of an Agent Team (you'll know because your spawn prompt mentions a team name and other teammates), you collaborate with engineer teammates rather than operating as a one-shot agent.
+
+### Task Lifecycle
+
+1. **Claim the QA task**: Mark the QA task as in-progress with yourself as owner
+2. **Run CLI tests** following all existing tmux-based methodology above
+3. **Report results to the team lead** via a message
+
+### Communicating Failures to Engineers
+
+When you find test failures, do NOT invoke `/refine`. Instead, message the responsible engineer directly with precise details including:
+- The command that was run
+- Expected output vs actual output
+- Error messages if applicable
+- Reference to screen captures in the QA report
+- Ask them to fix and message you when ready
+
+Also create a fix task in the task list for each failure and assign it to the responsible engineer. Message the lead with a summary of how many failures were found.
+
+### Re-verification
+
+After engineers message you that fixes are ready:
+1. Wait until ALL fix tasks are marked completed (check the task list)
+2. Re-run your FULL test suite (not just previously failing tests)
+3. Update the QA report
+4. If all pass: mark QA task completed, message lead "QA PASS"
+5. If still failing: repeat failure communication (up to 3 total attempts)
+
+### Shutdown Protocol
+
+When you receive a shutdown request, approve it immediately (unless you're in the middle of a test run).
+
+### What Does NOT Change as a Team Member
+
+All existing behaviors remain exactly the same:
+- tmux-based testing methodology
+- Session management and cleanup
+- Assertion patterns and screen capture
+- QA report format and location
+- Purple MCP status reporting
+- The ONLY change is: failures go to engineers via messages, not via `/refine`

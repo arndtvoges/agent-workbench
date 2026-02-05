@@ -1,31 +1,33 @@
 ---
 argument-hint: [feature-folder-path]
-description: Orchestrate parallel senior engineers to implement tasks from engineering spec (project)
+description: Orchestrate an Agent Team of senior engineers to implement tasks from engineering spec (project)
 model: claude-sonnet-4-5
 ---
 
-# Orchestrate Parallel Implementation
+# Orchestrate Implementation via Agent Team
 
-Your goal is to take the engineering implementation specification and orchestrate multiple senior engineer agents working in parallel to efficiently implement all tasks while maintaining consistency and architectural integrity.
+Your goal is to take the engineering implementation specification and orchestrate an **Agent Team** of senior engineers to implement all tasks while maintaining consistency and architectural integrity. You are the **team lead**.
 
 ---
 
-## CRITICAL: Stay Alive While Agents Work
+## CRITICAL: You Are the Team Lead
 
-**When you spawn agents via the Task tool, you MUST remain active and waiting for their results.**
+When you create an Agent Team, you become the team lead. You MUST remain active throughout the entire team lifecycle.
 
 **DO NOT:**
-- End your turn or consider yourself "done" while agents are still running
-- Output a final summary until ALL spawned agents have returned results
-- Say "agents are working, I'll wait" and then stop - you must actually wait
+- End your turn while any task is still `in_progress` or `pending`
+- Consider yourself "done" until all tasks are `completed` and the team is shut down and cleaned up
+- Treat teammate idle notifications as problems -- idle is the normal state between turns
+- Implement tickets yourself -- you are the coordinator, not an implementor
 
 **DO:**
-- Keep waiting indefinitely - agents may take a long time to complete
-- The Task tool will return results when agents finish
-- Stay in the conversation and wait for those results before proceeding
+- Monitor progress via the task list and auto-delivered teammate messages
+- Assign work to teammates when they need direction
+- Handle blocker escalations from teammates promptly
+- Forward interface change notifications to affected engineers
+- Shut down teammates and clean up the team when all work is complete
 
-**WRONG:** Spawn agents → Output "agents are working..." → End turn
-**RIGHT:** Spawn agents → Wait for results → Process results → Continue or summarize
+Messages from teammates are delivered automatically -- you do NOT need to poll or check an inbox. When a teammate sends you a message, it arrives as a new conversation turn.
 
 ---
 
@@ -93,77 +95,214 @@ During/after execution of this command:
 
 ---
 
-# DO SECOND: Phase Execution Loop
+# DO SECOND: Create Implementation Team
 
-Execute phases sequentially. Within each phase, maximize parallelism while respecting dependencies.
+Create an Agent Team named `impl-{feature-slug}`. This team will coordinate all engineer and QA teammates for this feature's implementation.
+
+---
+
+# DO THIRD: Create All Tasks with Dependencies
+
+Map every ticket from the implementation spec into the team's shared task list. Create ALL tasks upfront before spawning any teammates.
+
+## Mapping Rules
+
+For each ticket in the implementation spec, in phase order:
+
+1. **Create a task** for each ticket. The task title should follow the format `"{TICKET-ID}: {ticket title}"`. The task description must include:
+   - Full ticket details and objective from the spec
+   - Acceptance criteria
+   - Files to create/modify
+   - Contract/interface signatures
+   - Pattern references from the spec
+   - Key considerations and gotchas
+   - Feature folder path: `purple/documentation/{feature-folder}/`
+   - Completion doc path: `completed-tickets-documentation/{phase}-{ticket#}-{slug}-documentation.md`
+   - Reminder: **"You MUST read ALL standards in purple/standards/ before writing any code. Report status via purple_status MCP."**
+
+2. **Set dependencies** between tasks to mirror the implementation spec:
+   - If ticket B depends on ticket A, mark B as blocked by A
+   - Phase N tickets are blocked by their explicit dependencies from the spec
+   - If the spec doesn't specify, Phase N tickets are blocked by ALL Phase N-1 tickets
+
+3. **Record the mapping**: Keep track of TICKET-ID to task ID (needed for dependency setup)
+
+## QA Sentinel Task
+
+After all implementation tasks, create ONE sentinel task called "QA Verification". Mark it as blocked by ALL implementation task IDs. This task will automatically unblock when all implementation tasks are completed, signaling that it's time to spawn QA.
+
+---
+
+# DO FOURTH: Spawn Engineer Teammates
+
+## Calculate Team Size
+
+Count total implementation tickets (exclude QA sentinel). Determine engineer count:
+
+| Tickets | Engineers |
+|---------|-----------|
+| 1-3     | 1         |
+| 4-6     | 2         |
+| 7-9     | 3         |
+| 10+     | 4 (maximum) |
+
+## Assign Ownership Zones
+
+Before spawning, partition tickets into ownership zones. Each engineer gets a set of tickets they are primarily responsible for. Grouping criteria (in priority order):
+
+1. **File overlap**: Tickets modifying the same files go to the same engineer
+2. **Dependency chains**: If A blocks B, prefer giving both to the same engineer
+3. **Layer cohesion**: Backend tickets together, frontend tickets together
+4. **Balanced load**: Roughly equal ticket counts per engineer
+
+## Spawn Teammates
+
+Spawn each engineer as a `senior-engineer` teammate on the `impl-{feature-slug}` team. Name them `engineer-1`, `engineer-2`, etc. **Spawn ALL engineers in a SINGLE message** for true parallelism.
+
+### Spawn Prompt Template
+
+Each engineer's spawn prompt MUST include:
 
 ```
-FOR each phase in implementation_spec.phases:
+You are engineer-{N} on the implementation team for {feature-slug}.
 
-    1. IDENTIFY tickets and their dependencies
+## Your Ownership Zone
+You are primarily responsible for these tasks:
+- Task #{id}: {TICKET-ID}: {title}
+- Task #{id}: {TICKET-ID}: {title}
+...
 
-    2. SPAWN senior-engineer agents:
-       - Independent tickets → launch in PARALLEL (single message, multiple Task calls)
-       - Dependent tickets → run SEQUENTIALLY after dependencies complete
-       - Each agent receives: ticket details, relevant standards, cohesion context
-       - Each agent writes completion summary to:
-         `completed-tickets-documentation/{phase}-{ticket#}-{slug}-documentation.md`
-       - Agents call `purple_status` with `ticket.status.status: "in_progress"` and `"completed"`
-         (progress.json is updated automatically by Purple CLI)
+Start by claiming and working on these tasks. After completing your zone, check the task list for any remaining unclaimed tasks.
 
-    3. WAIT for all agents in phase to complete
+## Getting Started
+1. Read ALL project standards:
+   - All files in purple/standards/global/ (may be symlinks -- use Bash/Read directly if Glob finds nothing)
+   - All files in purple/standards/backend/
+   - All files in purple/standards/frontend/
+   This is MANDATORY before writing any code.
+2. Check the task list for available tasks
+3. Claim your first task (mark it in_progress with yourself as owner)
+4. Implement the ticket following all standards and the implementation spec
+5. Write completion doc to: completed-tickets-documentation/{phase}-{ticket#}-{slug}-documentation.md
+6. Report status via purple_status MCP
+7. Mark the task as completed
+8. Message the lead with a brief completion summary
+9. Check the task list and claim your next available task
 
-    4. READ all summaries from `completed-tickets-documentation/` for this phase
+## Team Communication Rules
+- If you change a shared interface (types, exports, API contract), message affected engineers about the change
+- If you hit a blocker you cannot resolve, message the lead immediately
+- When a QA agent messages you about a failure, check the task list for fix tasks and fix the issue
+- When you receive a shutdown request, finish current work then approve the shutdown
 
-    5. EVALUATE summaries:
+## Feature Context
+- Feature folder: purple/documentation/{feature-folder}/
+- Implementation spec: {path to implementation spec}
+- The implementation spec contains ALL ticket details, contracts, and architecture decisions
 
-       IF all OK:
-           → Proceed to next phase
+## Other Engineers on the Team
+{list other engineer names and their ownership zones, so this engineer knows who to message about interface changes}
+```
 
-       IF BLOCKING issues found:
-           → STOP execution
-           → Surface issue to user with full context
-           → Request user input
-           → After resolution: retry failed ticket(s)
-           → Continue with tickets that were blocked by the failed ones
+---
 
-       IF CORRECTABLE (non-critical deviations):
-           → Note deviations in memory
-           → When spawning future tickets that may be affected,
-             inject relevant deviation context into their prompts
-           → Proceed to next phase
+# DO FIFTH: Monitor Implementation Progress
 
-AFTER all phases complete → enter QA Loop
+After spawning all engineers, monitor their work through auto-delivered messages and the shared task list.
+
+```
+WHILE there are pending or in_progress implementation tasks:
+
+    1. RECEIVE messages from teammates (auto-delivered):
+
+       - COMPLETION notifications:
+         → Note the completed task
+         → Update purple_status with ticket status "completed" and completion summary
+         → Check the task list for overall progress
+
+       - BLOCKER escalations:
+         → Classify as BLOCKING or CORRECTABLE (see table below)
+         → BLOCKING: Surface to user with full context, request input
+         → CORRECTABLE: Message the engineer with resolution guidance,
+           also forward context to any affected downstream engineers
+
+       - INTERFACE CHANGE notifications:
+         → Forward to affected engineers
+         → Example: engineer-1 renames an API endpoint -> message engineer-2 who
+           consumes that endpoint
+
+    2. CHECK the task list periodically:
+       - Verify all engineers have in_progress tasks (no one is idle without reason)
+       - Check that tasks are unblocking correctly as dependencies complete
+       - If an engineer appears idle with unclaimed tasks in their zone,
+         message them to claim the next task
+
+    3. If an engineer has no more tasks in their zone but other unclaimed tasks exist:
+       → Message them to claim from the remaining pool
+
+WHEN all implementation tasks show status "completed":
+    → The QA Sentinel task becomes unblocked
+    → Proceed to DO SIXTH (QA)
 ```
 
 ## Blocking vs Correctable Issues
 
 | Issue Type | Examples | Action |
 |------------|----------|--------|
-| **Blocking** | Missing dependencies, schema conflicts, unresolvable errors, fundamental misunderstanding | Stop, ask user |
-| **Correctable** | Minor API changes, renamed exports, adjusted interfaces, workarounds applied | Note deviation, propagate context to downstream tickets |
+| **Blocking** | Missing dependencies, schema conflicts, unresolvable errors, fundamental misunderstanding | Stop, surface to user |
+| **Correctable** | Minor API changes, renamed exports, adjusted interfaces, workarounds applied | Message engineer with guidance, forward context to downstream engineers |
 
 ---
 
-# DO THIRD: QA Loop
+# DO SIXTH: QA Verification Loop
 
-After all implementation phases complete, validate the feature through automated testing.
+After all implementation tasks are complete, validate the feature through QA teammates.
 
-**Update QA status in the progress panel using `purple_status`:**
-```json
-{
-  "qaActive": true,
-  "qaRunNumber": 1,
-  "qaCurrentTest": "Running unit tests"
-}
+## Step 1: Determine QA Agents Needed
+
+Based on feature characteristics:
+- Has web UI / frontend pages → spawn a `qa-agent-web` teammate
+- Has API endpoints → spawn a `qa-agent-api` teammate
+- Has CLI commands → spawn a `qa-agent-cli` teammate
+
+If multiple QA types are needed, create separate QA sub-tasks (one per type), all blocked by the implementation tasks.
+
+## Step 2: Spawn QA Teammate(s)
+
+Spawn each QA agent as a teammate on the `impl-{feature-slug}` team. Name them `qa-web`, `qa-api`, or `qa-cli` as appropriate.
+
+### QA Spawn Prompt Template
+
+```
+You are {qa-type} on the implementation team for {feature-slug}.
+
+## Your Task
+Claim the QA task (Task #{qa_task_id}) and run verification.
+- QA attempt: {attempt_number} of 3
+- Feature folder: purple/documentation/{feature-folder}/
+- Write QA report to: purple/documentation/{feature-folder}/qa-results/
+
+## What Was Built
+{Summary of implemented tickets and what they do, from completion docs}
+
+## Key Pages/Endpoints/Commands to Test
+{List based on the implementation spec}
+
+## Team Communication
+- If you find failures, message the SPECIFIC engineer responsible with precise details
+- Also create fix tasks in the task list and assign them to the responsible engineer
+- Also message the lead with a summary of results
+- After engineers fix issues, re-run your FULL test suite
+- Do NOT invoke /refine -- communicate with engineers directly
+
+## Other Team Members
+{List of engineers and their ownership zones, so QA knows who to message}
+
+## Standards
+Read purple/standards/ before starting. This is mandatory.
 ```
 
-Update `qaCurrentTest` as you move through different test phases. When QA completes:
-```json
-{
-  "qaActive": false
-}
-```
+## Step 3: QA Execution and Communication Loop
 
 ```
 attempt_count = 0
@@ -171,34 +310,55 @@ attempt_count = 0
 LOOP:
     attempt_count++
 
-    1. BUILD QA plan based on feature characteristics:
-       - Has web UI       → include Web QA agent
-       - Has API endpoints → include API QA agent
-       - Has CLI commands  → include CLI QA agent
+    UPDATE purple_status: qaActive=true, qaRunNumber=attempt_count
 
-    2. UPDATE QA status via `purple_status`:
-       - Set `qaActive: true`, `qaRunNumber: attempt_count`
-       - Update `qaCurrentTest` as tests progress
+    1. QA teammate(s) claim QA task, run tests, write report
 
-    3. EXECUTE tests via appropriate QA agents
-       → Results written to `purple/documentation/{feature-folder}/qa-results/`
+    2. QA teammate messages lead with results:
+       - PASS: QA marks task completed, messages lead "QA PASS"
+       - FAIL: QA messages specific engineers with failure details,
+         creates fix tasks, assigns to responsible engineers
 
-    4. EVALUATE results:
+    3. IF QA PASS:
+       → Set qaActive=false via purple_status
+       → Proceed to DO SEVENTH (shutdown)
 
-       IF all tests pass:
-           → Set `qaActive: false` via `purple_status`
-           → EXIT loop
-           → Report success to user
+    4. IF QA FAIL AND attempt_count < 3:
+       → Monitor fix tasks via the task list
+       → When all fix tasks completed, message QA to re-run full suite
+       → QA re-runs ALL tests (not just failures)
+       → Loop back
 
-       IF failures AND attempt_count < 3:
-           → Invoke /refine with failure context
-           → /refine reads failures, implements fixes
-           → Re-run FULL QA plan (all tests, not just failures)
-           → Loop back to step 1
-
-       IF failures AND attempt_count >= 3:
-           → ABORT QA loop
-           → Surface all failures to user
-           → Request guidance on how to proceed
+    5. IF QA FAIL AND attempt_count >= 3:
+       → Set qaActive=false via purple_status
+       → QA report documents remaining failures
+       → Proceed to DO SEVENTH with failure note
+       → Surface remaining failures to user
 ```
 
+### If an Engineer is Unreachable During QA Fixes
+
+If QA messages an engineer who doesn't respond (already shut down or stuck):
+1. Spawn a new engineer teammate with the fix context
+2. Or reassign the fix task to another active engineer
+
+---
+
+# DO SEVENTH: Shutdown and Cleanup
+
+After QA passes (or 3 attempts exhausted), shut down the team.
+
+1. **Shutdown all teammates**: Send a shutdown request to each active teammate (each engineer and QA agent).
+
+2. **Wait for shutdown confirmations**: Each teammate will confirm shutdown. Wait for all confirmations.
+
+3. **Handle rejections**: If a teammate declines shutdown:
+   - Read their reason (they may be finishing critical work)
+   - Wait a reasonable time and retry
+   - If still declining, send another request with context that all tasks are done
+
+4. **Cleanup team**: Remove the team and its task directories.
+
+5. **If cleanup fails**: Retry once after re-sending shutdown requests to any remaining active teammates. If still failing, log a warning and proceed -- the team directories are ephemeral and use the feature slug, so they won't conflict with future runs.
+
+6. **Final purple_status update**: Set `qaActive: false` if not already done.
