@@ -96,3 +96,5 @@ DO NOTS
     - The enriched specification (if created - otherwise use original user spec)
     - Clear indication that input has been pre-validated and is ready for spec writing (no further questions needed)
     - Tell it to place the product spec in: `{feature-folder}/agent-written-specifications/agent-written-product-spec-{feature-slug}.md`
+
+**After the product-spec-writer agent returns, this command is complete. If you are running as part of `/build-from-spec`, proceed immediately to the next phase — do not summarize results or ask for confirmation.**

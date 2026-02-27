@@ -46,6 +46,9 @@ This is a fully autonomous workflow. Once started, you will execute ALL phases f
 
 ## Phase-by-phase instructions
 
+## PHASE 1: Import and Product Spec
+
+Run `/import-spec` with the user-provided arguments. This is the ONLY phase where you may pause to ask the user clarifying questions. Once the product-spec-writer agent returns, **immediately** proceed to Phase 2 — do not summarize, do not ask to continue.
 
 
 ## PHASE 2: Engineering Architecture and Task Breakdown
