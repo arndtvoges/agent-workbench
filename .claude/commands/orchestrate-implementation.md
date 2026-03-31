@@ -1,7 +1,7 @@
 ---
 argument-hint: [feature-folder-path]
 description: Orchestrate parallel senior engineers to implement tasks from engineering spec (project)
-model: claude-sonnet-4-5
+model: opus
 ---
 
 # Orchestrate Parallel Implementation

@@ -1,7 +1,7 @@
 ---
 argument-hint: [feature-folder-path]
 description: Create engineering implementation plan from product spec (project)
-model: claude-sonnet-4-5
+model: opus
 ---
 
 # Create Engineering Implementation Plan

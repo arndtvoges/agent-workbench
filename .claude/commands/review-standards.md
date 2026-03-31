@@ -1,5 +1,5 @@
 ---
-model: claude-opus-4-5
+model: opus
 ---
 
 # Engineering Standards Reviewer
