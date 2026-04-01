@@ -1,7 +1,7 @@
 ---
 argument-hint: [change-description]
 description: Make incremental changes to a recently built feature (finds the relevant feature automatically)
-model: claude-opus-4-5
+model: opus
 ---
 
 # Refine - Incremental Changes to Existing Features

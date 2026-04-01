@@ -1,7 +1,7 @@
 ---
 argument-hint: [optional-user-context]
 description: Create engineering standards from existing codebase or from scratch
-model: claude-opus-4-5
+model: opus
 
 # Engineering Standards Creator
 

@@ -1,7 +1,7 @@
 ---
 argument-hint: [user-provided roduct-specification] [optional-user-provided-technical-specification]
 description: End-to-end: import spec → product spec → engineering tasks → implementation → qa → loop back if necessary
-model: claude-opus-4-5
+model: opus
 ---
 
 # Build From Spec - Complete End-to-End Pipeline
