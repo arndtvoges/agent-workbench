@@ -42,8 +42,12 @@ business/...
 ## Further instructions:
 - Keep standards short and tight
 - Do NOT explain with code
+- When creating `global/testing.md`, document the project's test runners, test patterns, and conventions ONLY. Do NOT create QA loop instructions, verification sequences, or autonomous testing workflows — those are handled separately by the `/create-qa-loops` command. Specifically, never write a `## QA Loops` heading.
 - Use "DOs" and "DON'Ts"
 - Be prescriptive, the better the standards outline the users' preferences, the better the output
 - Use ASCII diagrams if you see fit
 - Refrain from specifying version numbers and other details that change frequently
 - Be interactive, but make the user's life as easy as you can
+
+## After completion:
+Once all standards have been created, tell the user you're now going to set up QA loops so agents can verify their work autonomously. Then invoke `/create-qa-loops` to start the QA loops setup flow.
