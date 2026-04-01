@@ -1,7 +1,7 @@
 ---
 argument-hint: [user-provided-product-specification] [optional-user-provided-technical-specification]
 description: Import user specifications and ask clarifying questions
-model: claude-opus-4-5
+model: opus
 ---
 
 # Import user specifications
