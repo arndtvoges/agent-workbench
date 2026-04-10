@@ -18,14 +18,15 @@ description: "End-to-end feature pipeline: import spec → product spec → engi
 
 **YOU MUST RUN THIS ENTIRE PIPELINE WITHOUT STOPPING OR ASKING FOR PERMISSION TO CONTINUE.**
 
-This is a fully autonomous workflow. Once started, you will execute ALL phases from start to finish:
-1. `/import-spec` → 2. `/engineer-tasks-from-spec` → 3. `/orchestrate-implementation` → 4. QA Loop → 5. Final Summary
+This is a fully autonomous workflow. Once started, you will execute ALL phases from start to finish.
 
 **DO NOT:**
 - Stop after any phase and ask "Ready to continue?" or "Should I proceed?"
 - Wait for user confirmation between phases
 - Consider yourself "done" until you've completed ALL phases including the final MCP signal
 - End your turn while agents are still running
+- Collapse or skip phases — each phase has specific instructions you MUST follow
+- Guess what a phase does — READ the skill file for each phase
 
 **DO:**
 - Execute each phase immediately after the previous one completes
@@ -33,20 +34,32 @@ This is a fully autonomous workflow. Once started, you will execute ALL phases f
 - Keep working until you reach the final signal
 - Stay active and waiting when agents are running
 
-## Pipeline Overview
+## Pipeline Execution
 
-1. Run `/import-spec` with parameters [user-provided-product-specification] [optional-user-provided-technical-specification] - Setup and product spec writing
-2. Run `/engineer-tasks-from-spec` - Engineering architecture and task breakdown
-3. Run `/orchestrate-implementation` - Parallel implementation by senior engineers, followed by qa-fix loop
+You MUST execute these 3 phases in order. For each phase, READ the skill file to get the full instructions, then follow them exactly.
 
-## How to Invoke
+### Phase 1: Import & Validate Specification
 
-User provides a product specification or description, optionally with technical requirements. The skill automatically:
-1. Imports and validates the specification
-2. Generates a formal product spec
-3. Creates engineering architecture and tickets
-4. Orchestrates parallel implementation
-5. Runs QA verification
-6. Delivers completed feature with all documentation
+**Read the file `.codex/skills/import-spec/SKILL.md` now.** Execute every instruction in that file before proceeding to Phase 2.
 
-This is a hands-off workflow - once started, the skill manages all handoffs between phases and agents.
+This phase validates the user's spec, asks clarifying questions, and produces a formal product specification. Do not proceed to Phase 2 until a product spec document has been written to `purple/documentation/`.
+
+### Phase 2: Engineering Architecture & Task Breakdown
+
+**Read the file `.codex/skills/engineer-tasks-from-spec/SKILL.md` now.** Execute every instruction in that file before proceeding to Phase 3.
+
+This phase takes the product spec from Phase 1 and creates an engineering implementation plan with phased tickets. Do not proceed to Phase 3 until an implementation spec with tickets has been written to `purple/documentation/`.
+
+### Phase 3: Orchestrate Implementation & QA
+
+**Read the file `.codex/skills/orchestrate-implementation/SKILL.md` now.** Execute every instruction in that file.
+
+This phase spawns sub-agents to implement the tickets from Phase 2 in parallel, then runs QA verification loops. This phase is complete when all tickets are implemented and QA passes.
+
+## Completion
+
+After all 3 phases are complete:
+1. Report a final summary of what was built
+2. List all files created/modified
+3. List any issues or follow-up items
+4. Signal completion via the purple_status MCP tool if available
