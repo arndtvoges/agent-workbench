@@ -59,6 +59,8 @@ During/after execution of this command:
    - Potential conflicts and cohesion requirements
 
 5. **Call Purple MCP**: Announce phases and tickets using the unified `purple_status` tool with all ticket metadata.
+   - This is REQUIRED when the tool is available.
+   - You must send ticket updates as work starts, completes, blocks, and when QA begins/ends.
 
 ---
 
@@ -85,7 +87,7 @@ After all implementation tasks, create ONE sentinel task called "QA Verification
 
 Calculate team size based on ticket count (1-4 engineers), assign ownership zones based on file overlap and dependencies, and spawn all engineers in parallel.
 
-Each engineer spawns with their ownership zone and task list to begin work.
+Each engineer spawns with their ownership zone and task list to begin work. You MUST use actual harness sub-agents for this step; do not simulate teammates in prose.
 
 ---
 
@@ -96,6 +98,7 @@ After spawning all engineers, monitor their work through auto-delivered messages
 - Classify blockers as BLOCKING or CORRECTABLE
 - Forward interface change notifications to affected engineers
 - Verify engineers have work and resolve idle states
+- Ensure each completed implementation ticket produces a documentation file in `completed-tickets-documentation/`
 
 When all implementation tasks are completed, the QA Sentinel task unblocks automatically.
 
@@ -108,6 +111,7 @@ After implementation completes:
 2. Spawn QA teammates with full context
 3. Run QA loop (up to 3 attempts):
    - QA runs tests and reports to lead
+   - QA must write at least one report file to `purple/documentation/{feature-folder}/qa-results/`
    - If PASS: Set qaActive=false and proceed to shutdown
    - If FAIL: QA messages engineers with failures, engineers fix, QA re-runs
 4. After 3 attempts or pass, proceed to shutdown
@@ -121,6 +125,7 @@ After QA passes (or 3 attempts exhausted):
 2. Wait for shutdown confirmations
 3. Clean up team and task directories
 4. Final purple_status update
+5. Verify that completed-ticket documentation exists and at least one QA report exists before considering the workflow complete
 
 ---
 

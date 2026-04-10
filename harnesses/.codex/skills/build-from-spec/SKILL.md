@@ -27,12 +27,30 @@ This is a fully autonomous workflow. Once started, you will execute ALL phases f
 - End your turn while agents are still running
 - Collapse or skip phases — each phase has specific instructions you MUST follow
 - Guess what a phase does — READ the skill file for each phase
+- Start implementing code before the required documentation artifacts for the current phase exist on disk
 
 **DO:**
 - Execute each phase immediately after the previous one completes
 - Only time you can stop is to ask questions to the user in phase 1
 - Keep working until you reach the final signal
 - Stay active and waiting when agents are running
+- Treat invocation of `/build-from-spec` as explicit user authorization to spawn sub-agents for product spec writing, engineering planning, implementation, and QA
+- Verify the required output files for each phase before proceeding
+
+## Required Phase Gates
+
+You may only move to the next phase when these files exist:
+
+- After Phase 1:
+  - `purple/documentation/{feature-folder}/user-provided-product-spec-{feature-slug}.md`
+  - `purple/documentation/{feature-folder}/agent-written-specifications/agent-written-product-spec-{feature-slug}.md`
+- After Phase 2:
+  - `purple/documentation/{feature-folder}/agent-written-specifications/implementation-spec-{feature-slug}.md`
+- After Phase 3:
+  - At least one file in `purple/documentation/{feature-folder}/completed-tickets-documentation/`
+  - At least one file in `purple/documentation/{feature-folder}/qa-results/`
+
+If a required file is missing, the pipeline is not complete and you must continue working instead of summarizing.
 
 ## Pipeline Execution
 
@@ -63,3 +81,11 @@ After all 3 phases are complete:
 2. List all files created/modified
 3. List any issues or follow-up items
 4. Signal completion via the purple_status MCP tool if available
+
+If the purple_status MCP tool is available, you MUST update it:
+- at the start of the workflow
+- at the end of Phase 1
+- at the end of Phase 2
+- when implementation begins
+- when QA begins and ends
+- at final completion

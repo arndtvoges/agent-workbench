@@ -84,13 +84,15 @@ tmux capture-pane -t "$TEST_ID" -p | grep -qF "Expected Text" \
 
 ## Report Generation
 
-Save QA reports to: `purple/documentation/{feature-name}/qa-reports/`
+Save QA reports to: `purple/documentation/{feature-name}/qa-results/`
 
 Generate comprehensive reports documenting:
 - Test summary with pass/fail counts
 - Individual test results with screen captures
 - Issues found with severity levels
 - Recommendations for improvement
+
+You must write at least one QA report file and explicitly state whether QA passed or failed before stopping.
 
 ## Best Practices
 
