@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What's New in Purple</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --purple: #7C3AED;
+    --purple-light: #8B5CF6;
+    --purple-subtle: #F3EEFF;
+    --purple-border: #E2D6F8;
+    --purple-dark: #5B21B6;
+    --text: #1a1a2e;
+    --text-secondary: #4a4a6a;
+    --text-muted: #7a7a9a;
+    --bg: #ffffff;
+    --bg-alt: #FAFAFE;
+    --border: #E5E5EF;
+    --white: #ffffff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 11px;
+    line-height: 1.5;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  /* Header */
+  .header {
+    background: var(--purple);
+    padding: 22px 36px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-mark {
+    width: 36px;
+    height: 36px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--white);
+    letter-spacing: -0.5px;
+  }
+
+  .logo-text h1 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.3px;
+  }
+
+  .logo-text span {
+    font-size: 10px;
+    color: rgba(255,255,255,0.7);
+    font-weight: 400;
+  }
+
+  .header-meta {
+    text-align: right;
+    font-size: 10px;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .header-meta .date {
+    color: var(--white);
+    font-weight: 600;
+  }
+
+  /* Content */
+  .content {
+    padding: 22px 36px 20px;
+  }
+
+  .intro {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    line-height: 1.65;
+    max-width: 92%;
+  }
+
+  .intro strong {
+    color: var(--purple);
+    font-weight: 600;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 18px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .version-badge {
+    background: var(--purple);
+    color: var(--white);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .section-subtitle {
+    font-size: 10.5px;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 10px;
+    padding-left: 2px;
+  }
+
+  /* Sub-section */
+  .subsection-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--purple);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 12px;
+    font-size: 10px;
+  }
+
+  th {
+    background: var(--purple);
+    color: var(--white);
+    font-weight: 600;
+    text-align: left;
+    padding: 6px 10px;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  th:first-child {
+    border-radius: 4px 0 0 0;
+  }
+
+  th:last-child {
+    border-radius: 0 4px 0 0;
+  }
+
+  td {
+    padding: 5px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  td strong {
+    color: var(--purple-dark);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+  }
+
+  tr:nth-child(even) td {
+    background: var(--bg-alt);
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* No-header tables */
+  .agent-table td:first-child {
+    width: 130px;
+  }
+
+  /* Lists */
+  ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 10px;
+  }
+
+  ul li {
+    padding: 2px 0 2px 16px;
+    position: relative;
+    font-size: 10.5px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+  }
+
+  ul li::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 8px;
+    width: 5px;
+    height: 5px;
+    background: var(--purple);
+    border-radius: 50%;
+  }
+
+  ul li strong {
+    color: var(--text);
+  }
+
+  /* Ordered list */
+  ol {
+    padding-left: 18px;
+    margin-bottom: 10px;
+  }
+
+  ol li {
+    padding: 1.5px 0;
+    font-size: 10.5px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+  }
+
+  ol li strong {
+    color: var(--text);
+  }
+
+  ol li::marker {
+    color: var(--purple);
+    font-weight: 700;
+  }
+
+  /* Agent count note */
+  .note {
+    font-size: 9.5px;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-bottom: 12px;
+  }
+
+  /* Two columns */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, var(--purple), var(--purple-border), transparent);
+    margin: 16px 0;
+  }
+
+  /* Comparison table */
+  .comparison-table th:first-child {
+    width: 22%;
+  }
+
+  .comparison-table td:first-child {
+    font-weight: 600;
+    color: var(--purple-dark);
+    font-size: 9.5px;
+  }
+
+  .comparison-table .col-old {
+    color: var(--text-muted);
+  }
+
+  .comparison-table .col-va {
+    color: var(--text-secondary);
+  }
+
+  .comparison-table .col-vb {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .check { color: #059669; font-weight: 600; }
+  .cross { color: #DC2626; opacity: 0.7; }
+  .partial { color: #D97706; }
+
+  /* Footer */
+  .footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 2px solid var(--purple);
+    font-size: 9px;
+    color: var(--text-muted);
+    background: var(--bg-alt);
+  }
+
+  .footer a {
+    color: var(--purple);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .footer .dot {
+    color: var(--purple-border);
+    margin: 0 6px;
+  }
+
+  .footer .brand {
+    color: var(--purple);
+    font-weight: 700;
+  }
+
+  /* Code */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    background: var(--purple-subtle);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--purple-dark);
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo-area">
+      <div class="logo-mark">./p</div>
+      <div class="logo-text">
+        <h1>What's New in Purple</h1>
+        <span>AI-powered development workflow orchestration</span>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="date">March 2026</div>
+      <div>Changelog &amp; Upgrade Guide</div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <p class="intro">
+      Purple has evolved from a codebase-specific implementation into a <strong>portable, universal AI development framework</strong> — ready to drop into any project. Two new versions are available to subscribers.
+    </p>
+
+    <!-- vA Section -->
+    <div class="section">
+      <div class="section-header">
+        <span class="version-badge">vA</span>
+        <span class="section-title">Core Platform</span>
+      </div>
+      <p class="section-subtitle">Generalized agent orchestration. No more hardcoded repos or project-specific workflows.</p>
+
+      <div class="two-col">
+        <div>
+          <p class="subsection-title">New Agents</p>
+          <table class="agent-table">
+            <tr>
+              <td><strong>backend-qa-tester</strong></td>
+              <td>Tests API endpoints, validates response schemas, checks error handling with severity levels.</td>
+            </tr>
+            <tr>
+              <td><strong>cli-qa-tester</strong></td>
+              <td>Headless QA for CLI/TUI apps via tmux. Captures screen states and verifies output.</td>
+            </tr>
+          </table>
+          <p class="note">Total: 7 agents (up from 5) — product-spec-writer, engineering-architect, senior-engineer, incremental-change-engineer, qa-engineer, backend-qa-tester, cli-qa-tester.</p>
+        </div>
+        <div>
+          <p class="subsection-title">Architecture Changes</p>
+          <ul>
+            <li><strong>Portable by design</strong> — No hardcoded repos, branches, or org names. Drop <code>.claude/</code> into any project.</li>
+            <li><strong><code>purple/</code> folder</strong> — Replaces <code>workbench/</code>. Clean separation: standards, documentation, temp.</li>
+            <li><strong>3 QA agents</strong> — Web (Playwright), API (curl/jq), CLI (tmux).</li>
+            <li><strong>7 focused commands</strong> — Streamlined from 13+. Project-specific commands removed.</li>
+            <li><strong>Cleaner pipeline</strong> — Autonomous end-to-end with no stops between phases.</li>
+            <li><strong>Multi-repo</strong> — <code>repos/</code> directory for multi-repo workspaces.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- vB Section -->
+    <div class="section">
+      <div class="section-header">
+        <span class="version-badge">vB</span>
+        <span class="section-title">Agent Teams</span>
+      </div>
+      <p class="section-subtitle">From command-and-control orchestration to autonomous team collaboration.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Capability</th>
+            <th>Before (vA)</th>
+            <th>Now (vB)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Agent lifecycle</strong></td>
+            <td>Spawn &rarr; execute &rarr; return &rarr; die</td>
+            <td>Spawn &rarr; claim tasks &rarr; message teammates &rarr; shutdown</td>
+          </tr>
+          <tr>
+            <td><strong>Task coordination</strong></td>
+            <td>Orchestrator assigns work by phase</td>
+            <td>Shared task list — engineers self-claim unblocked tasks</td>
+          </tr>
+          <tr>
+            <td><strong>Communication</strong></td>
+            <td>None between agents</td>
+            <td>Auto-delivered messages (completions, blockers, changes)</td>
+          </tr>
+          <tr>
+            <td><strong>QA fix loop</strong></td>
+            <td>QA &rarr; orchestrator &rarr; <code>/refine</code> &rarr; new agent</td>
+            <td>QA messages the responsible engineer directly</td>
+          </tr>
+          <tr>
+            <td><strong>Parallelism</strong></td>
+            <td>Parallel within phases, sequential across</td>
+            <td>ALL engineers spawned at once, work across phases</td>
+          </tr>
+          <tr>
+            <td><strong>Ownership</strong></td>
+            <td>Implicit file isolation</td>
+            <td>Explicit ownership zones per engineer</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="two-col">
+        <div>
+          <p class="subsection-title">How It Works</p>
+          <ol>
+            <li><strong>Team creation</strong> — Named team (<code>impl-{feature}</code>) with shared task list</li>
+            <li><strong>Task mapping</strong> — ALL tickets loaded upfront with dependencies</li>
+            <li><strong>Engineer spawning</strong> — 1–4 engineers, each with an ownership zone</li>
+            <li><strong>Autonomous work</strong> — Claim tasks, build, message about interface changes</li>
+            <li><strong>QA integration</strong> — QA agents join team, message engineers with failures</li>
+            <li><strong>Structured shutdown</strong> — Confirm or reject with reason</li>
+          </ol>
+        </div>
+        <div>
+          <p class="subsection-title">Agent Upgrades</p>
+          <p style="font-size: 10.5px; margin-bottom: 6px; color: var(--text-secondary);">All 4 operational agents received <strong>"When Working as a Team Member"</strong> sections:</p>
+          <ul>
+            <li>How to claim and prioritize tasks from the shared list</li>
+            <li>When to message teammates (completions, blockers, interface changes)</li>
+            <li>How to handle QA failure messages and create fix tasks</li>
+            <li>Shutdown protocol (approve/reject with reason)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div>
+      <span class="brand">./purple</span>
+      <span class="dot">&middot;</span>
+      AI-powered development workflows
+    </div>
+    <div>
+      <a href="https://bepurple.ai">bepurple.ai</a>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
