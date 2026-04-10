@@ -74,13 +74,107 @@ This phase takes the product spec from Phase 1 and creates an engineering implem
 
 This phase spawns sub-agents to implement the tickets from Phase 2 in parallel, then runs QA verification loops. This phase is complete when all tickets are implemented and QA passes.
 
-## Completion
+## Phase 4: Manual Setup Documentation
 
-After all 3 phases are complete:
-1. Report a final summary of what was built
-2. List all files created/modified
-3. List any issues or follow-up items
-4. Signal completion via the purple_status MCP tool if available
+After Phase 3 (orchestrate-implementation) completes, create `{feature-folder}/manual-setup.md` to document any manual actions the user must perform.
+
+**Review all documentation** (implementation spec, completed tickets) to identify manual setup requirements:
+- Environment variables to add
+- Database migrations to run manually
+- API keys to obtain and configure
+- Third-party service configurations
+- DNS or domain settings
+- Cron jobs or scheduled tasks
+- Any other manual steps not handled by code
+
+**Create the file with this format:**
+
+```markdown
+# Manual Setup Required
+
+**Feature:** {feature-name}
+**Date:** {YYYY-MM-DD}
+
+## Checklist
+
+### Environment Variables
+- [ ] `EXAMPLE_API_KEY` - Get from [Service Dashboard](https://example.com) and add to `.env.local`
+
+### Third-Party Services
+- [ ] Configure webhook URL in service dashboard
+
+### Other
+- [ ] Run database migration: `pnpm db:migrate`
+
+---
+
+**Note:** If no manual setup is required, this section will state "No manual setup required for this feature."
+```
+
+**If no manual setup is needed**, still create the file with:
+
+```markdown
+# Manual Setup Required
+
+**Feature:** {feature-name}
+**Date:** {YYYY-MM-DD}
+
+## Checklist
+
+No manual setup required for this feature. All configuration is handled automatically by the implementation.
+```
+
+## Phase 5: Final Summary & Build Complete Signal
+
+### Present Final Summary
+
+```
+## Build Complete!
+
+**Feature:** {feature-slug}
+**Status:** {QA PASS/FAIL}
+
+### Manual Setup Required
+**IMPORTANT:** Review `purple/documentation/{feature-folder}/manual-setup.md` for any manual configuration steps.
+
+{List 2-3 key items from manual-setup.md, or "No manual setup required"}
+
+### Documentation Created
+- Product Spec: `agent-written-specifications/agent-written-product-spec-{slug}.md`
+- Engineering Spec: `agent-written-specifications/implementation-spec-{slug}.md`
+- QA Report: `qa-results/qa-report-{slug}.md`
+- Manual Setup: `manual-setup.md`
+
+### Next Steps
+1. Review the manual setup checklist above
+2. Test the feature
+3. Use `/refine` to make any adjustments
+```
+
+### Signal Build Complete (REQUIRED)
+
+**CRITICAL:** After presenting the final summary, you MUST signal build completion via the `purple_status` MCP tool:
+
+```json
+{
+  "buildComplete": true,
+  "phase": "5 - Complete"
+}
+```
+
+This tells the app the entire build pipeline has finished. **Do not skip this step.**
+
+## Output Locations
+
+The pipeline will create:
+- `{feature-folder}/user-provided-product-spec-{feature-slug}.md`
+- `{feature-folder}/user-provided-technical-spec-{feature-slug}.md` (if provided)
+- `{feature-folder}/enriched-user-spec-{feature-slug}.md` (if clarifications were asked)
+- `{feature-folder}/agent-written-specifications/agent-written-product-spec-{feature-slug}.md`
+- `{feature-folder}/agent-written-specifications/implementation-spec-{feature-slug}.md`
+- `{feature-folder}/completed-tickets-documentation/*.md` (one per ticket)
+- `{feature-folder}/qa-results/*.md` (QA reports)
+- `{feature-folder}/manual-setup.md` (manual setup checklist)
 
 If the purple_status MCP tool is available, you MUST update it:
 - at the start of the workflow
