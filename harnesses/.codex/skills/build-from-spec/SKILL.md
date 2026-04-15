@@ -72,7 +72,7 @@ This phase takes the product spec from Phase 1 and creates an engineering implem
 
 **Read the file `.codex/skills/orchestrate-implementation/SKILL.md` now.** Execute every instruction in that file.
 
-This phase spawns sub-agents to implement the tickets from Phase 2 in parallel, then runs QA verification loops. This phase is complete when all tickets are implemented and QA passes.
+This phase spawns sub-agents to implement the tickets from Phase 2 in parallel, then runs QA verification loops. QA applies to ALL project types — web, API, CLI, database, etc. — not just web apps. The orchestrator will read `purple/standards/global/testing.md` to determine what QA procedures apply. This phase is complete when all tickets are implemented and QA passes (or 3 QA attempts are exhausted).
 
 ## Phase 4: Manual Setup Documentation
 

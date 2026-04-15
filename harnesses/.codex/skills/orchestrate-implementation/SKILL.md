@@ -106,8 +106,22 @@ When all implementation tasks are completed, the QA Sentinel task unblocks autom
 
 ## DO SIXTH: QA Verification Loop
 
+**BEFORE starting QA:**
+- Read `purple/standards/global/testing.md` (if it exists) for QA loop procedures, verification sequences, tool-specific instructions, and prerequisites
+- Review the implementation spec and completed ticket docs to identify what was built: web UI, API endpoints, CLI commands, database changes, background jobs, auth flows, etc.
+- These standards define HOW to run QA for each project type — always follow them when present
+
+**IMPORTANT:** Do NOT skip QA based on project type. If the project has API endpoints, CLI commands, database operations, or any other testable surface — QA must run. QA is not limited to web/UI verification. Only skip if there is genuinely nothing testable (e.g., documentation-only changes).
+
 After implementation completes:
-1. Determine QA agents needed (web, API, CLI based on feature type)
+1. Determine QA agents needed based on feature characteristics AND standards:
+   - Has web UI         → spawn Web QA teammate (Playwright or as defined in testing.md)
+   - Has API endpoints  → spawn API QA teammate (curl/jq or as defined in testing.md)
+   - Has CLI commands   → spawn CLI QA teammate (tmux or as defined in testing.md)
+   - Has DB changes     → spawn Database QA teammate (if procedures defined in testing.md)
+   - Has background jobs → spawn Jobs QA teammate (if procedures defined in testing.md)
+   - Has auth changes   → spawn Auth QA teammate (if procedures defined in testing.md)
+   - If testing.md defines verification sequences for a relevant type, pass them to the QA teammate
 2. Spawn QA teammates with full context
 3. Run QA loop (up to 3 attempts):
    - QA runs tests and reports to lead
