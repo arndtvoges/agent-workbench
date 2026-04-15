@@ -165,16 +165,27 @@ Update `qaCurrentTest` as you move through different test phases. When QA comple
 }
 ```
 
+**BEFORE entering the loop:**
+- Read `purple/standards/global/testing.md` (if it exists) for QA loop procedures, verification sequences, tool-specific instructions, and prerequisites
+- Review the implementation spec and completed ticket docs to identify what was built: web UI, API endpoints, CLI commands, database changes, background jobs, auth flows, etc.
+- These standards define HOW to run QA for each project type — always follow them when present
+
+**IMPORTANT:** Do NOT skip QA based on project type. If the project has API endpoints, CLI commands, database operations, or any other testable surface — QA must run. QA is not limited to web/UI verification. Only skip if there is genuinely nothing testable (e.g., documentation-only changes).
+
 ```
 attempt_count = 0
 
 LOOP:
     attempt_count++
 
-    1. BUILD QA plan based on feature characteristics:
-       - Has web UI       → include Web QA agent
-       - Has API endpoints → include API QA agent
-       - Has CLI commands  → include CLI QA agent
+    1. BUILD QA plan based on feature characteristics AND standards:
+       - Has web UI         → include Web QA agent (Playwright MCP or as defined in testing.md)
+       - Has API endpoints  → include API QA agent (curl/jq or as defined in testing.md)
+       - Has CLI commands   → include CLI QA agent (tmux or as defined in testing.md)
+       - Has DB changes     → include Database QA (if procedures defined in testing.md)
+       - Has background jobs → include Jobs QA (if procedures defined in testing.md)
+       - Has auth changes   → include Auth QA (if procedures defined in testing.md)
+       - If testing.md defines verification sequences for a relevant type, pass them to the QA agent
 
     2. UPDATE QA status via `purple_status`:
        - Set `qaActive: true`, `qaRunNumber: attempt_count`

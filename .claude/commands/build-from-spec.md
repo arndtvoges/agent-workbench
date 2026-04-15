@@ -112,23 +112,32 @@ Run `/import-spec` with the user-provided arguments. This is the ONLY phase wher
 
 This phase runs a QA → Fix → QA loop with a maximum of 3 attempts to ensure the implementation works correctly.
 
-**IMPORTANT:** This phase is **conditional** and should only run if:
-1. The project has a web interface (frontend, web app, etc.)
-2. The implementation includes visual/UI changes that can be verified in a browser
+**BEFORE deciding whether to skip QA:**
+1. Read `purple/standards/global/testing.md` (if it exists) to check for defined QA procedures
+2. Review the implementation spec to identify what was actually built (web UI, API endpoints, CLI commands, database changes, background jobs, auth flows, etc.)
 
-**Skip QA if:**
-- The project is a CLI tool, library, or backend-only service
-- The implementation is purely backend/API changes with no UI
-- There are no web pages or components to visually verify
+**Run QA if ANY of the following are true:**
+- The implementation includes a web interface or visual/UI changes → Web QA
+- The implementation includes API endpoints → API QA
+- The implementation includes CLI commands or TUI interfaces → CLI QA
+- `testing.md` defines QA procedures that apply to what was built (database verification, background jobs, auth/permissions, email/notifications, integration tests, etc.)
+- The implementation has any other testable surface with QA procedures defined in standards
 
-If QA is skipped, proceed directly to PHASE 5 (Manual Setup Documentation) and note in the final summary: "QA skipped - no visual/UI changes to verify."
+**Only skip QA if:**
+- The changes are purely documentation, configuration, or refactoring with no testable behavior
+- No QA procedures are defined in standards AND the changes have no testable surface (no UI, no API, no CLI, no database changes)
+
+If QA is skipped, proceed directly to PHASE 5 (Manual Setup Documentation) and explain specifically why QA was skipped in the final summary.
 
 ### Step 18: Prepare QA Environment
 
-- Check if the project has a dev server command (usually `pnpm dev`, `npm run dev`, or similar)
-- If a dev server is already running, use it
-- If not running, start it in the background and wait for it to be ready
-- Set `QA_BASE_URL` to the local dev server URL (typically `http://localhost:3000` or similar)
+- Read `purple/standards/global/testing.md` for QA procedures, prerequisites, and tool-specific instructions
+- Based on what was built, prepare the appropriate environment:
+  - **Web UI**: Check if the project has a dev server command (e.g., `pnpm dev`). Start it if not running. Set `QA_BASE_URL`.
+  - **API endpoints**: Ensure the API server is running. Note the base URL, auth requirements, and critical endpoints.
+  - **CLI commands**: Ensure the binary is built. Note the binary path and key commands.
+  - **Database changes**: Ensure database is accessible. Note connection details.
+  - **Other**: Follow prerequisites defined in `testing.md` for the relevant QA type.
 
 ---
 
@@ -138,24 +147,32 @@ Set attempt counter to 1. Maximum attempts = 3.
 
 ---
 
-### Step 20: Launch QA Engineer
+### Step 20: Launch QA Verification
 
-Invoke the `qa-engineer` agent to perform basic visual verification:
-- Provide the **feature folder path** (e.g., `purple/documentation/251204-{feature-slug}/`)
-- Provide the **feature slug** for naming the report file
-- Provide context about what was built (summary of implemented features)
-- List the key pages/components that were created or modified
-- Specify the URL(s) to check: `{QA_BASE_URL}` + relevant paths
-- Include the current attempt number (e.g., "QA Attempt 1 of 3")
+Based on what was built and what `testing.md` defines, launch the appropriate QA agent(s):
 
-The QA engineer will:
-- Navigate to the implemented pages using Playwright MCP
-- Take screenshots to verify rendering (saved to `{feature-folder}/qa-screenshots/`)
-- Check browser console for errors or warnings
-- Verify new UI components actually appear on screen
-- Test basic interactions (buttons click, dialogs open, etc.)
-- **Save a QA report** to `{feature-folder}/qa-report-{feature-slug}.md`
-- Clearly indicate PASS or FAIL status with specific issues listed
+- **Web UI changes** → Launch `qa-engineer` agent (Playwright MCP):
+  - Provide feature folder path, feature slug, `QA_BASE_URL`, and relevant routes
+  - Verify pages render, check console errors, take screenshots
+  - Test basic interactions (buttons click, dialogs open, forms submit)
+
+- **API endpoint changes** → Launch `backend-qa-tester` agent:
+  - Provide API base URL, endpoints to test, auth requirements
+  - Verify response codes, response schemas, error handling
+  - Follow API QA procedures from `testing.md` if defined
+
+- **CLI command changes** → Launch `cli-qa-tester` agent:
+  - Provide binary path, build command, key commands to test
+  - Verify output, exit codes, error handling
+  - Follow CLI QA procedures from `testing.md` if defined
+
+- **Database / background jobs / auth / other** → Follow the QA procedures defined in `testing.md` for these types, using the appropriate tools (SQL queries, curl, log inspection, etc.)
+
+- **Multiple types** → Launch the appropriate agents in parallel
+
+If `testing.md` defines specific verification sequences, prerequisites, or expected outcomes for the relevant QA type, pass those instructions to the QA agent.
+
+All QA agents should save results to `{feature-folder}/qa-report-{feature-slug}.md` with a clear PASS or FAIL status and specific issues listed.
 
 ---
 
@@ -295,14 +312,16 @@ This signal tells the Purple app that the entire build pipeline has finished, al
 
 **QA Loop Summary**:
 ```
-[Start dev server if needed]
+[Check testing.md for QA procedures]
      ↓
-Attempt 1: QA → if FAIL → Fix →
+[Prepare environment based on what was built: dev server, API server, CLI binary, etc.]
+     ↓
+Attempt 1: QA (web/API/CLI/other as applicable) → if FAIL → Fix →
 Attempt 2: QA → if FAIL → Fix →
 Attempt 3: QA → Done (pass or fail)
 ```
 
-**Note**: This is a quick sanity check loop, not comprehensive testing. The goal is to catch and fix obvious issues like missing components, console errors, or broken layouts within 3 attempts.
+**Note**: This is a quick sanity check loop, not comprehensive testing. The goal is to catch and fix obvious issues within 3 attempts. QA applies to ALL project types — web, API, CLI, database, etc. — not just web apps.
 
 ---
 
