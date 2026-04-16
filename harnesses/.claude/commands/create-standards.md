@@ -39,6 +39,18 @@ business/...
 - core value prop
 - pricing model
 
+## Asking questions interactively
+
+When you need user input (feedback on a standard, choosing between options, confirming decisions), use the `AskUserQuestion` tool instead of typing plain questions in the chat. This renders a structured UI with clickable options that is much faster for the user to respond to.
+
+Structure your questions with:
+- `header`: Short title for the question (e.g. "Database ORM preference")
+- `question`: The full question text
+- `options`: Array of `{ label, description }` choices when there are clear alternatives
+- `multiSelect`: `true` when the user can pick more than one option
+
+Use plain chat text only for open-ended discussion or when the tool is not available.
+
 ## Further instructions:
 - Keep standards short and tight
 - Do NOT explain with code
@@ -48,6 +60,16 @@ business/...
 - Use ASCII diagrams if you see fit
 - Refrain from specifying version numbers and other details that change frequently
 - Be interactive, but make the user's life as easy as you can
+
+## Completion Signal (MCP)
+
+After all standards files have been written and you are fully done (not just pausing to ask a question), check if the `onboarding_step_complete` MCP tool is available. If it is, call it with:
+
+- `step`: `"standards"`
+- `filesCreated`: the total number of `.md` files written under `purple/standards/`
+- `categories`: the number of unique top-level category folders under `purple/standards/` (e.g. `global`, `frontend`, `backend`, `business` → 4)
+
+This signal tells the Purple UI to mark the Standards step as complete and unlock the next step. If the tool is not available in your current tool list, skip this step and continue normally.
 
 ## After completion:
 Once all standards have been created, tell the user you're now going to set up QA loops so agents can verify their work autonomously. Then invoke `/create-qa-loops` to start the QA loops setup flow.
