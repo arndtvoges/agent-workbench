@@ -47,3 +47,12 @@ Optionally provide context about QA focus (e.g., "focus on API testing", "we use
 
 - **Credentials**: Warn users about credentials in files; suggest using environment variables instead
 - **Automation**: Only use when explicitly invoked — not for regular development workflows
+
+## Completion Signal (MCP)
+
+After finishing the QA loops file (`purple/standards/global/testing.md`) and you are fully done (not just pausing to ask a question), check if the `onboarding_step_complete` MCP tool is available. If it is, call it with:
+
+- `step`: `"qa-loops"`
+- `scenariosCreated`: the number of distinct QA scenarios you configured (e.g. website QA + API QA + DB verification = 3)
+
+This signal tells the Purple UI to transition to the completion screen. If the tool is not available in your current tool list, skip this step and continue normally.

@@ -59,12 +59,26 @@ Based on your analysis, select the relevant scenarios from the 9 templates below
 
 ---
 
+## Asking questions interactively
+
+When you need user input (accepting/rejecting scenarios, choosing options, confirming decisions), use the `AskUserQuestion` tool instead of typing plain questions in the chat. This renders a structured UI with clickable options that is much faster for the user to respond to.
+
+Structure your questions with:
+- `header`: Short title for the question (e.g. "Website QA Setup")
+- `question`: The full question text
+- `options`: Array of `{ label, description }` choices when there are clear alternatives
+- `multiSelect`: `true` when the user can pick more than one option
+
+Use plain chat text only for open-ended discussion or when the tool is not available.
+
+---
+
 ## Step 4: Interactive Refinement
 
 For each scenario the user accepts:
 
 1. Present the template summary
-2. Ask the user to accept, modify, or reject it
+2. Use `AskUserQuestion` to let the user accept, modify, or reject it
 3. Ask targeted follow-up questions specific to that scenario:
    - **Website/Web App**: What is the dev server start command? What is the base URL? Any login credentials for testing? Preferred browser automation tool (Playwright MCP vs agent-browser)?
    - **API Endpoints**: What is the API base URL? Are there auth tokens or API keys needed? Which endpoints are most critical?
@@ -612,3 +626,12 @@ Instructions for autonomous QA verification. Agents use these instructions to ve
 - If the user provides URLs, ports, credentials, or commands during the interactive phase, embed them directly into the instructions
 - Warn about credentials in plaintext but do not block on it
 - Write analysis findings to `purple/temp/qa-loops-analysis.md` to preserve context during long sessions
+
+## Completion Signal (MCP)
+
+After finishing the QA loops file (`purple/standards/global/testing.md`) and you are fully done (not just pausing to ask a question), check if the `onboarding_step_complete` MCP tool is available. If it is, call it with:
+
+- `step`: `"qa-loops"`
+- `scenariosCreated`: the number of distinct QA scenarios you configured (e.g. website QA + API QA + DB verification = 3)
+
+This signal tells the Purple UI to transition to the completion screen. If the tool is not available in your current tool list, skip this step and continue normally.

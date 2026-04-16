@@ -60,3 +60,13 @@ Run this skill when you want to:
 - Establish team coding conventions
 
 The skill will guide you through an interactive process to build comprehensive, practical standards that your agents can follow.
+
+## Completion Signal (MCP)
+
+After all standards files have been written and you are fully done (not just pausing to ask a question), check if the `onboarding_step_complete` MCP tool is available. If it is, call it with:
+
+- `step`: `"standards"`
+- `filesCreated`: the total number of `.md` files written under `purple/standards/`
+- `categories`: the number of unique top-level category folders under `purple/standards/` (e.g. `global`, `frontend`, `backend`, `business` → 4)
+
+This signal tells the Purple UI to mark the Standards step as complete and unlock the next step. If the tool is not available in your current tool list, skip this step and continue normally.
