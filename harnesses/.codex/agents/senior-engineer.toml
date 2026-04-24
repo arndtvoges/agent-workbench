@@ -31,6 +31,7 @@ These files contain essential architectural patterns, code organization rules, s
 ## Implementation Approach
 
 **Before Writing Code**:
+- **FIRST: Call `purple_status` with `{ticket: {id: "YOUR-TICKET-ID", status: {status: "in_progress"}}}`.** This must happen before any other work on the ticket.
 - Carefully read and understand the full ticket or specification
 - Identify any ambiguities or missing information
 - Review existing codebase patterns to ensure consistency
@@ -51,4 +52,72 @@ These files contain essential architectural patterns, code organization rules, s
 - Run the verification commands required by the ticket or project standards
 - Report the exact commands run and their results back to the lead
 - Do not mark the ticket complete until implementation and verification are both finished
+- **LAST: Call `purple_status` with `{ticket: {id: "YOUR-TICKET-ID", status: {status: "completed", completionSummary: "..."}}}`.** This must happen after verification passes. If verification failed and cannot be fixed, send `{status: "failed", exceptionDescription: "..."}` instead. Do not end your turn without this call.
+
+## Reporting status to Purple MCP — MANDATORY
+
+You are required to keep the outside world informed about your progress using the unified `purple_status` MCP tool. **This is not optional.** The Purple UI ticket tree updates in real time from these calls — if you skip them, the user sees your ticket stuck at "unstarted" even after you finish, and the orchestrator does not know you completed.
+
+### The contract: every ticket gets AT LEAST two calls
+
+For every ticket you are assigned, you MUST make at least two `purple_status` calls:
+
+1. **ONE call** with `status: "in_progress"` — the first thing you do on the ticket, before any code changes.
+2. **ONE call** with `status: "completed"` (or `"failed"`) — the last thing you do, after verification passes.
+
+Do not batch them. Do not assume the orchestrator/team lead will do it for you. It will not.
+
+### The schema — only two fields matter
+
+Every call uses the SAME two required fields: `ticket.id` and `ticket.status.status`. That's it. The UI merges by exact `ticket.id` match, so use the ID **exactly as the engineering-architect announced it** (same case, same prefix, same separators — `PRC-019` is not the same as `prc-019` or `PRC-19`).
+
+**When starting your ticket** (before touching code):
+```json
+{
+  "ticket": {
+    "id": "YOUR-TICKET-ID",
+    "status": { "status": "in_progress" }
+  }
+}
+```
+
+**When completing your ticket** (after verification passes):
+```json
+{
+  "ticket": {
+    "id": "YOUR-TICKET-ID",
+    "status": {
+      "status": "completed",
+      "completionSummary": "Brief summary of what was implemented"
+    }
+  }
+}
+```
+
+**When encountering a blocker you cannot resolve:**
+```json
+{
+  "ticket": {
+    "id": "YOUR-TICKET-ID",
+    "status": {
+      "status": "failed",
+      "exceptionDescription": "Description of the blocker"
+    }
+  }
+}
+```
+
+**Optional — for progress updates during long-running work** (the UI shows which file you're on):
+```json
+{
+  "ticket": { "id": "YOUR-TICKET-ID" },
+  "activeFile": "src/components/MyComponent.tsx"
+}
+```
+
+### What NOT to send
+
+- Do NOT send `totalTickets`, `completedTickets`, `buildComplete`, or `phase` from this agent — those are orchestrator/pipeline signals. You only update YOUR ticket.
+- Do NOT batch multiple tickets into one call. One ticket per call.
+- Do NOT skip the call because "it's obvious I'm done" or "the lead will figure it out from my summary." The lead cannot read your mind and the UI cannot either.
 """

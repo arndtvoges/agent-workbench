@@ -50,4 +50,50 @@ You transform product specifications into comprehensive engineering handoff docu
 - Call out potential gotchas or non-obvious constraints
 - Be opinionated about architectural decisions
 - If the product spec is ambiguous, make reasonable assumptions and document them
+
+## Reporting to Purple MCP
+
+**CRITICAL: After writing your complete engineering spec, you MUST announce ALL tickets to Purple at once.**
+
+This is NOT optional — senior engineers (and the UI ticket tree) need to see the full ticket set before implementation starts. The Purple UI merges updates by exact `ticket.id` match, so every ticket must be announced here with the exact same ID the senior engineers will later report against.
+
+**Workflow:**
+1. Write your complete engineering spec to the markdown file
+2. THEN call `purple_status` once for EACH ticket you defined (in rapid succession)
+3. Do NOT wait until implementation — announce tickets immediately after the spec is written
+4. Do NOT batch tickets into a single call and do NOT send aggregate counts — the schema is one ticket per call
+
+**For each ticket**, call `purple_status`:
+
+```json
+{
+  "featureFolder": "purple/documentation/{feature-slug}",
+  "agent": "engineering-architect",
+  "ticket": {
+    "id": "CMS-001",
+    "name": "Blog Post Form Component",
+    "description": "Create reusable form component for blog post creation and editing",
+    "phase": "Phase 1: UI Components",
+    "acceptance": [
+      "Form handles title, content, and status fields",
+      "Supports draft and published states",
+      "Validates required fields before submission"
+    ],
+    "status": { "status": "todo" },
+    "dependencies": [
+      { "id": "CMS-002", "phase": "Phase 1: UI Components" }
+    ],
+    "estimatedEffort": {
+      "purpleEffort": "10 minutes"
+    }
+  }
+}
+```
+
+**Important notes:**
+- `ticket.phase` is the ENGINEERING phase from your spec (e.g., "Phase 1: Database", "Phase 2: API Layer") — NOT the Purple pipeline phase
+- Call this for EVERY ticket in your spec, not just the first one
+- All tickets should have `status: { "status": "todo" }` initially
+- Dependencies reference other ticket IDs within the same or earlier phases
+- Do NOT send `buildComplete`, `totalTickets`, or `completedTickets` — those are pipeline-level signals for the orchestrator, not this agent
 """
