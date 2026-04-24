@@ -153,7 +153,7 @@ No manual setup required for this feature. All configuration is handled automati
 
 ### Signal Build Complete (REQUIRED)
 
-**CRITICAL:** After presenting the final summary, you MUST signal build completion via the `purple_status` MCP tool:
+**CRITICAL:** After presenting the final summary, you MUST signal build completion via the `purple_status` MCP tool. Call it with EXACTLY these two fields:
 
 ```json
 {
@@ -163,6 +163,16 @@ No manual setup required for this feature. All configuration is handled automati
 ```
 
 This tells the app the entire build pipeline has finished. **Do not skip this step.**
+
+**ANTI-PATTERN — DO NOT DO THIS:**
+
+Do NOT use this call as a way to summarize the work. Do NOT add `totalTickets`, `completedTickets`, or any other aggregate fields here. The Purple UI updates ticket statuses ONLY from per-ticket calls with a matching `ticket.id` — the `buildComplete` signal does not and cannot "mark all tickets completed". If you send `{ "totalTickets": 24, "completedTickets": 24, "buildComplete": true }` thinking it will flip the ticket tree to done, it will NOT: the tickets stay at whatever status they had after the last `ticket.id`-matched update, and you will see the exact bug this guard exists to prevent — agents reporting "done" while the UI shows tickets as unstarted.
+
+Per-ticket progress is the sole responsibility of:
+- `engineering-architect` (announces each ticket with `status: "todo"` after writing the spec)
+- `senior-engineer` (reports `in_progress`, then `completed` or `failed`, for its assigned ticket)
+
+If by this point you see tickets that should be `completed` still showing as `todo` in the UI, the bug is in Phase 2 or 3 (missing/failed `purple_status` calls, or ticket ID drift between architect and engineer), NOT something `buildComplete` can retroactively fix.
 
 ## Output Locations
 

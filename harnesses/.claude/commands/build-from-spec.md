@@ -81,6 +81,17 @@ Run `/import-spec` with the user-provided arguments. This is the ONLY phase wher
    - Potential conflicts (multiple tickets modifying the same file)
    - Cohesion requirements (components that need consistent implementation)
 
+   **Before spawning any engineer agents, announce the implementation phase to Purple MCP** by calling `purple_status` to set the pipeline context:
+   ```json
+   {
+     "featureFolder": "purple/documentation/{feature-folder}",
+     "phase": "3 - Implementation",
+     "agent": "orchestrator",
+     "totalTickets": <total ticket count>
+   }
+   ```
+   The engineering-architect should already have announced each ticket with `status: { "status": "todo" }` during Phase 2. If any ticket from the implementation spec is missing from that announcement, announce it here with the same per-ticket schema. ONE call per ticket — do not batch and do not send aggregate counts in place of per-ticket announcements.
+
 14) **Intelligent Task Grouping**: Analyze tasks to determine optimal grouping:
    - **Identify Cohesive Units**: Group related components that should share similar styling, data structures, or patterns
    - **Analyze Separable Work**: Identify truly independent tasks that can be parallelized
@@ -98,9 +109,10 @@ Run `/import-spec` with the user-provided arguments. This is the ONLY phase wher
     - Assign cohesive work units to each agent
     - Provide full context (spec excerpts, standards, patterns to follow)
     - Define clear ownership boundaries and cross-agent contracts
+    - Each senior-engineer agent is responsible for emitting its own per-ticket `purple_status` updates (`in_progress`, `completed`, `failed`) — DO NOT report ticket status on their behalf from this orchestrator
 
 17) **Monitor and Coordinate**: After each phase completes:
-    - Verify all tickets in the phase are completed
+    - Verify all tickets in the phase are completed (check that each senior-engineer reported `status: "completed"` via `purple_status` — the Purple UI will reflect this via matching `ticket.id`)
     - Check for consistency across related components
     - Validate integration points between agent work
     - Run tests if specified
@@ -298,7 +310,7 @@ Present a final summary to the user that prominently highlights the manual setup
 
 **CRITICAL:** After presenting the final summary, you MUST signal build completion to the Purple app via MCP.
 
-Call the `purple_status` tool with:
+Call the `purple_status` tool with EXACTLY these two fields:
 ```json
 {
   "buildComplete": true,
@@ -307,6 +319,16 @@ Call the `purple_status` tool with:
 ```
 
 This signal tells the Purple app that the entire build pipeline has finished, allowing it to transition the UI to the final phase. **Do not skip this step.**
+
+**ANTI-PATTERN — DO NOT DO THIS:**
+
+Do NOT use this call as a way to summarize the work. In particular, do NOT add `totalTickets`, `completedTickets`, or any other aggregate fields here. The Purple UI updates ticket statuses ONLY from per-ticket calls with a matching `ticket.id` — the `buildComplete` signal does not and cannot "mark all tickets completed". If you send `{ "totalTickets": 24, "completedTickets": 24, "buildComplete": true }` thinking it will flip the ticket tree to done, it will NOT: the tickets stay at whatever status they had after the last `ticket.id`-matched update, and you will see the exact bug this guard exists to prevent — agents reporting "done" while the UI shows tickets as unstarted.
+
+Per-ticket progress is the sole responsibility of:
+- `engineering-architect` (announces each ticket with `status: "todo"` after writing the spec)
+- `senior-engineer` (reports `in_progress`, then `completed` or `failed`, for its assigned ticket)
+
+If by Step 26 you see tickets that should be `completed` still showing as `todo` in the UI, the bug is in Phase 2 or 3 (missing/failed `purple_status` calls, or ticket ID drift between architect and engineer), NOT something `buildComplete` can retroactively fix.
 
 ---
 

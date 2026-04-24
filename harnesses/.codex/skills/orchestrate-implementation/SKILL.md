@@ -58,9 +58,56 @@ During/after execution of this command:
    - Files created/modified per ticket
    - Potential conflicts and cohesion requirements
 
-5. **Call Purple MCP**: Announce phases and tickets using the unified `purple_status` tool with all ticket metadata.
-   - This is REQUIRED when the tool is available.
-   - You must send ticket updates as work starts, completes, blocks, and when QA begins/ends.
+5. **Call Purple MCP**: Announce the implementation phase and ticket metadata using the unified `purple_status` tool. This is REQUIRED when the tool is available. The schema is ONE ticket per call — do not batch tickets or send aggregate counts.
+
+   **First, set the feature folder and overall progress context:**
+   ```json
+   {
+     "featureFolder": "purple/documentation/{feature-folder}",
+     "phase": "3 - Implementation",
+     "agent": "orchestrator",
+     "totalTickets": <total count>
+   }
+   ```
+
+   **Then announce each ticket with full metadata** (one call per ticket — the engineering-architect may have already announced them, in which case you only need to ensure any tickets missing from the initial announcement are announced here):
+   ```json
+   {
+     "ticket": {
+       "id": "TICKET-001",
+       "name": "Ticket name",
+       "description": "What this ticket implements",
+       "phase": "Phase 1: Setup",
+       "acceptance": ["Criteria 1", "Criteria 2"],
+       "status": { "status": "todo" },
+       "dependencies": [{"id": "TICKET-000", "phase": "Phase 0"}],
+       "estimatedEffort": {
+         "humanEffort": "30 minutes",
+         "purpleEffort": "5 minutes"
+       }
+     }
+   }
+   ```
+
+   **During execution**, you must continue sending updates as work progresses. Senior-engineer teammates emit their own `in_progress` / `completed` / `failed` updates per ticket — as the lead you only need to relay status you observe directly (e.g., when reassigning a ticket, or when a teammate goes silent and you mark a ticket `failed` on their behalf). Use the same per-ticket schema:
+   ```json
+   {
+     "ticket": {
+       "id": "TICKET-001",
+       "status": { "status": "completed", "completionSummary": "Short summary" }
+     }
+   }
+   ```
+
+   **When QA begins and ends**, send QA status updates:
+   ```json
+   { "qaActive": true, "qaRunNumber": 1, "qaCurrentTest": "Running unit tests" }
+   ```
+   ```json
+   { "qaActive": false, "qaCurrentTest": "Passed" }
+   ```
+
+   **Do NOT** send `buildComplete`, `totalTickets: N, completedTickets: N, buildComplete: true` as a summary substitute for per-ticket updates — those are pipeline-end signals, not a way to mark tickets done in bulk. The Purple UI updates ticket statuses ONLY from per-ticket calls with a matching `ticket.id`.
 
 ---
 
