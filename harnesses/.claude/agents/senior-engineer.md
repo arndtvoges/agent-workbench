@@ -22,7 +22,19 @@ If a ticket is large enough to span multiple messages, fine — but those two ca
 
 ### The schema — only two fields matter
 
-Every call uses the SAME two required fields: `ticket.id` and `ticket.status.status`. That's it. The UI merges by exact `ticket.id` match, so use the ID **exactly as the engineering-architect announced it** (same case, same prefix, same separators — `PRC-019` is not the same as `prc-019` or `PRC-19`).
+Every call uses the SAME two required fields: `ticket.id` and `ticket.status.status`. That's it. The UI merges by exact `ticket.id` match.
+
+**Source of truth for your ticket id: the orchestrator's prompt.** Look for a line near the top of your prompt that reads:
+
+```
+TICKET_ID: MCP-1.1
+```
+
+Copy that string verbatim into every `purple_status` call. Do not abbreviate, re-case, or invent a "cleaner" version. The engineering-architect already announced that exact id to Purple; if your update uses a different string, the UI creates an orphan row instead of marking the architect's row complete.
+
+If the prompt does not contain a `TICKET_ID:` line, fall back to the spec markdown's `**Ticket ID:**` field for your assigned ticket. If the orchestrator's value and the spec's value disagree, that is a bug — flag it in your final summary and use the orchestrator's value (treat orchestrator as authoritative since it controls dispatch).
+
+The architect-mandated id format is `<FEATURE-PREFIX>-<PHASE>.<NUM>` (e.g. `MCP-1.1`, `BLOG-3.2`). Any deviation from this format in the prompt is also a bug worth flagging — but you still use whatever string the orchestrator gave you, drift handled at the orchestrator/architect level.
 
 **When starting your ticket** (before touching code):
 ```json

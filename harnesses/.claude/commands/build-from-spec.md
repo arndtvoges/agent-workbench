@@ -109,7 +109,30 @@ Run `/import-spec` with the user-provided arguments. This is the ONLY phase wher
     - Assign cohesive work units to each agent
     - Provide full context (spec excerpts, standards, patterns to follow)
     - Define clear ownership boundaries and cross-agent contracts
-    - Each senior-engineer agent is responsible for emitting its own per-ticket `purple_status` updates (`in_progress`, `completed`, `failed`) — DO NOT report ticket status on their behalf from this orchestrator
+    - **Pass the ticket id verbatim.** At the top of each senior-engineer prompt,
+      include a clearly labeled line:
+
+      ```
+      TICKET_ID: <exact id from spec>
+      ```
+
+      Copy this id from the spec markdown's `**Ticket ID:**` field for that
+      ticket. The engineering-architect has already announced this id to
+      Purple via `purple_status`; the engineer's per-ticket status updates
+      key off this exact string. Do not re-format, re-case, or simplify the
+      id — even one character of drift produces an orphan row in the UI and
+      the ticket stays stuck at "todo".
+    - **Pre-flight ID parity check (do this once, before the first dispatch):**
+      Read every `**Ticket ID:**` line in the spec markdown. Confirm they all
+      use the format the engineering-architect was instructed to use:
+      `<FEATURE-PREFIX>-<PHASE>.<NUM>` (uppercase, single dot before NUM, no
+      leading zeros — e.g. `MCP-1.1`, `BLOG-3.2`). If any ticket id in the
+      spec uses a different format, the architect deviated from its
+      contract — STOP, surface this to the user, and ask whether to
+      normalize the spec and re-announce, or proceed with drift accepted.
+    - Each senior-engineer agent is responsible for emitting its own per-ticket
+      `purple_status` updates (`in_progress`, `completed`, `failed`) — DO NOT
+      report ticket status on their behalf from this orchestrator.
 
 17) **Monitor and Coordinate**: After each phase completes:
     - Verify all tickets in the phase are completed (check that each senior-engineer reported `status: "completed"` via `purple_status` — the Purple UI will reflect this via matching `ticket.id`)
