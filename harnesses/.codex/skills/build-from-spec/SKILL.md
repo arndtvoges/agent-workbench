@@ -74,6 +74,8 @@ This phase takes the product spec from Phase 1 and creates an engineering implem
 
 This phase spawns sub-agents to implement the tickets from Phase 2 in parallel, then runs QA verification loops. QA applies to ALL project types — web, API, CLI, database, etc. — not just web apps. The orchestrator will read `purple/standards/global/testing.md` to determine what QA procedures apply. This phase is complete when all tickets are implemented and QA passes (or 3 QA attempts are exhausted).
 
+**Ticket ID parity is critical here.** Before dispatching engineers, the orchestrator MUST verify that every `**Ticket ID:**` line in the implementation spec uses the architect's mandated format (`<FEATURE-PREFIX>-<PHASE>.<NUM>`, e.g. `MCP-1.1`) AND match the ids the engineering-architect announced to `purple_status` in Phase 2. Each senior-engineer prompt MUST include a top-of-prompt `TICKET_ID: <exact id>` line copied verbatim from the spec. Drift between architect announcement, spec markdown, dispatch prompt, and engineer update breaks the UI ticket tree and tickets will stay stuck at "todo" even after work is done. See the orchestrate-implementation skill for the full parity check procedure.
+
 ## Phase 4: Manual Setup Documentation
 
 After Phase 3 (orchestrate-implementation) completes, create `{feature-folder}/manual-setup.md` to document any manual actions the user must perform.

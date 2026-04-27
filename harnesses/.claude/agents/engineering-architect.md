@@ -199,6 +199,51 @@ If you encounter:
 
 Clearly flag these issues in a "Blockers & Questions" section at the top of your document.
 
+## Ticket ID Format Contract
+
+The `ticket.id` string is a load-bearing identifier. It binds the spec markdown,
+your `purple_status` announcements, the orchestrator's dispatch prompts, and
+the senior-engineers' status updates into one consistent record. **The same
+id MUST appear verbatim in all four places.** If any link in that chain uses
+a different string (different case, prefix, separator, or numbering), the
+Purple UI will create orphan rows and tickets will stay stuck at "todo".
+
+### Format you MUST use
+
+`<FEATURE-PREFIX>-<PHASE>.<NUM>` — uppercase, hyphens, single dot before NUM.
+
+- `<FEATURE-PREFIX>` — 2–4 uppercase letters derived from the feature slug
+  (e.g. `MCP` for `mcp-manager-rework`, `AUTH` for `auth-rework`, `BLOG` for
+  `blog-cms`). Pick once and use it for every ticket in this spec.
+- `<PHASE>` — phase number as written in your spec headings (1, 2, 3…).
+- `<NUM>` — ticket number within the phase (1, 2, 3…), no leading zero.
+
+Examples: `MCP-1.1`, `MCP-2.3`, `AUTH-1.1`, `BLOG-3.2`.
+
+Avoid: `T1.1` (no feature prefix), `mcp-1.1` (lowercase), `MCP-001` (no phase
+component), `MCP-1-1` (hyphen instead of dot before NUM), `MCP_1.1`
+(underscore separator).
+
+### Where the same id appears
+
+Once you pick `MCP-1.1` for ticket 1 of phase 1, that exact string MUST appear in:
+
+1. The spec markdown's `**Ticket ID:** MCP-1.1` line under that ticket's heading.
+2. Your `purple_status` call: `{ticket: {id: "MCP-1.1", ...}}`.
+3. (Downstream) The orchestrator copies it into the senior-engineer's prompt as
+   a `TICKET_ID: MCP-1.1` line.
+4. (Downstream) The senior-engineer uses it in their `purple_status`
+   `in_progress` and `completed` calls.
+
+### Self-check before announcing
+
+Before you make your first `purple_status` call, scan your spec markdown and
+confirm every `**Ticket ID:**` line uses the format above. If your spec has
+inconsistent ids (e.g. some `T1.1`, some `MCP-1.1`), normalize all of them to
+the prescribed format before announcing — otherwise downstream agents will
+read different strings depending on which ticket they're assigned, and the
+UI will fragment.
+
 ## Reporting to Purple MCP
 
 **CRITICAL: After writing your complete engineering spec, you MUST announce ALL tickets to Purple at once.**
@@ -217,7 +262,7 @@ This is NOT optional - senior engineers need to see the full ticket tree before 
   "featureFolder": "purple/documentation/{feature-slug}",
   "agent": "engineering-architect",
   "ticket": {
-    "id": "CMS-001",
+    "id": "BLOG-1.1",
     "name": "Blog Post Form Component",
     "description": "Create reusable form component for blog post creation and editing",
     "phase": "Phase 1: UI Components",
@@ -228,7 +273,7 @@ This is NOT optional - senior engineers need to see the full ticket tree before 
     ],
     "status": { "status": "todo" },
     "dependencies": [
-      { "id": "CMS-002", "phase": "Phase 1: UI Components" }
+      { "id": "BLOG-1.2", "phase": "Phase 1: UI Components" }
     ],
     "estimatedEffort": {
       "purpleEffort": "10 minutes"

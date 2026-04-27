@@ -58,7 +58,19 @@ During/after execution of this command:
    - Files created/modified per ticket
    - Potential conflicts and cohesion requirements
 
-5. **Call Purple MCP**: Announce the implementation phase and ticket metadata using the unified `purple_status` tool. This is REQUIRED when the tool is available. The schema is ONE ticket per call — do not batch tickets or send aggregate counts.
+5. **Verify Ticket ID Parity** (before announcing or dispatching): Scan the
+   spec markdown's `**Ticket ID:**` lines and confirm:
+   - All ids use the format `<FEATURE-PREFIX>-<PHASE>.<NUM>` (uppercase,
+     single dot before NUM, no leading zeros — e.g. `MCP-1.1`, `BLOG-3.2`).
+   - All ids are unique within the spec.
+   - The set matches what the engineering-architect would have used in its
+     `purple_status` announcements (the architect is on the same contract).
+
+   If you find drift (mixed formats, lowercase, non-prescribed separators,
+   duplicates), STOP and surface to the user. Do NOT silently proceed —
+   every downstream `purple_status` call will create orphan rows.
+
+6. **Call Purple MCP**: Announce the implementation phase and ticket metadata using the unified `purple_status` tool. This is REQUIRED when the tool is available. The schema is ONE ticket per call — do not batch tickets or send aggregate counts.
 
    **First, set the feature folder and overall progress context:**
    ```json
@@ -135,6 +147,16 @@ After all implementation tasks, create ONE sentinel task called "QA Verification
 Calculate team size based on ticket count (1-4 engineers), assign ownership zones based on file overlap and dependencies, and spawn all engineers in parallel.
 
 Each engineer spawns with their ownership zone and task list to begin work. You MUST use actual harness sub-agents for this step; do not simulate teammates in prose.
+
+**Pass the ticket id verbatim in every dispatch prompt.** At the top of each senior-engineer's prompt (and in each task description on the shared task list), include a clearly labeled line:
+
+```
+TICKET_ID: <exact id from spec>
+```
+
+Copy this id from the spec markdown's `**Ticket ID:**` field for that ticket. The engineering-architect has already announced this id to Purple via `purple_status`; the engineer's per-ticket status updates key off this exact string. Do not re-format, re-case, or simplify the id — even one character of drift produces an orphan row in the UI and the ticket stays stuck at "todo" even after the engineer finishes the work.
+
+If a teammate later picks up additional tickets (e.g. you reassign or chain work), include a fresh `TICKET_ID:` line for each new assignment.
 
 ---
 

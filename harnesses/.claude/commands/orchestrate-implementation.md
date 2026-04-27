@@ -57,7 +57,19 @@ During/after execution of this command:
    - Files created/modified per ticket
    - Potential conflicts and cohesion requirements
 
-5. **Call Purple MCP**: Announce phases and tickets using the unified `purple_status` tool:
+5. **Verify Ticket ID Parity** (before announcing or dispatching): Scan the
+   spec markdown's `**Ticket ID:**` lines and confirm:
+   - All ids use the format `<FEATURE-PREFIX>-<PHASE>.<NUM>` (uppercase,
+     single dot before NUM, no leading zeros — e.g. `MCP-1.1`, `BLOG-3.2`).
+   - All ids are unique within the spec.
+   - The set matches what the engineering-architect would have used in its
+     `purple_status` announcements (the architect is on the same contract).
+
+   If you find drift (mixed formats, lowercase, non-prescribed separators,
+   duplicates), STOP and surface to the user. Do NOT silently proceed —
+   every downstream `purple_status` call will create orphan rows.
+
+6. **Call Purple MCP**: Announce phases and tickets using the unified `purple_status` tool:
 
    **First, set the feature folder:**
    ```json
@@ -109,7 +121,11 @@ FOR each phase in implementation_spec.phases:
        - Each agent writes completion summary to:
          `completed-tickets-documentation/{phase}-{ticket#}-{slug}-documentation.md`
        - Agents call `purple_status` with `ticket.status.status: "in_progress"` and `"completed"`
-         (progress.json is updated automatically by Purple CLI)
+       - The dispatch prompt to each senior-engineer MUST include a top-of-prompt
+         `TICKET_ID: <exact id>` line, copied verbatim from the spec markdown's
+         `**Ticket ID:**` field. The id is the binding key between architect
+         announcement, engineer update, and UI row — any drift here breaks the
+         ticket tree.
 
     3. WAIT for all agents in phase to complete
 
