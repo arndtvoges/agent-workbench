@@ -1,6 +1,6 @@
 # What's New in Purple Agents
 
-**by ./purple** | bepurple.ai | March 2026
+**by ./bepurple** | bepurple.ai | March 2026
 
 ---
 
@@ -89,4 +89,4 @@ All four operational agents (`senior-engineer`, `qa-engineer`, `backend-qa-teste
 
 ---
 
-<p align="center"><sub>Purple Agents is maintained by <strong>./purple</strong> — AI-powered development workflows.<br>hello@bepurple.ai · bepurple.ai</sub></p>
+<p align="center"><sub>Purple Agents is maintained by <strong>./bepurple</strong> — AI-powered development workflows.<br>hello@bepurple.ai · bepurple.ai</sub></p>
